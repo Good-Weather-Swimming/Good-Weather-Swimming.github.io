@@ -57,10 +57,16 @@
             backdrop-filter: blur(12px) saturate(180%);
             -webkit-backdrop-filter: blur(12px) saturate(180%);
             border-bottom: 1px solid rgba(0, 77, 122, 0.1);
-            position: sticky;
-            top: 0;
             z-index: 50;
             transition: background-color 0.3s ease;
+        }
+
+        /* Responsive Header Logic */
+        @media (min-width: 768px) {
+            .glass-sticky {
+                position: sticky;
+                top: 0;
+            }
         }
 
         .hero-gradient {
@@ -81,15 +87,18 @@
         /* Layout Containers */
         .responsive-iframe-container {
             position: relative;
-            padding-bottom: 75%;
+            padding-bottom: 50vh; /* Half screen height for mobile by default */
             height: 0;
             overflow: hidden;
             max-width: 100%;
         }
 
+        /* Switch to fixed height for desktop to prevent overly tall iframes */
         @media (min-width: 768px) {
-            .calendar-height { padding-bottom: 600px; }
-            .map-height { padding-bottom: 450px; }
+            .responsive-iframe-container {
+                padding-bottom: 0;
+                height: 600px;
+            }
         }
 
         .responsive-iframe-container iframe {
@@ -105,8 +114,8 @@
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="glass shadow-sm">
+    <!-- Navigation - Non-sticky on Mobile, Sticky on Desktop -->
+    <nav class="glass glass-sticky shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
@@ -155,12 +164,12 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
-                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400">
+                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
                     <i class="fas fa-unlock text-pink-600 text-2xl mb-4"></i>
                     <h4 class="font-bold text-lg mb-2">Totally Free</h4>
                     <p class="text-slate-600">No membership fees or hidden costs. We swim for the joy of it.</p>
                 </div>
-                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400">
+                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
                     <i class="fas fa-cloud-sun text-blue-600 text-2xl mb-4"></i>
                     <h4 class="font-bold text-lg mb-2">Weather Based</h4>
                     <p class="text-slate-600">We monitor the waves and wind to find the perfect swimming windows.</p>
@@ -178,7 +187,7 @@
                 Join our WhatsApp group for real-time announcements.
             </p>
             
-            <div class="responsive-iframe-container calendar-height shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
+            <div class="responsive-iframe-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
                 <!-- Google Calendar Embed API -->
                 <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Asia%2FNicosia&showPrint=0&showTz=0&showTabs=0&mode=WEEK&showDate=0&showNav=0&showTitle=0&showCalendars=0&hl=en&src=M2U3ODcyYWJmMjI1MmNiYWU5Yjc5NGNkMTJiMmNlNjZhOTk5NWFmZTJiYjIwYTk3MmUyODk3NmZlNzMyNGZkNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=MDZuOTVsamZuM2w4djdnb2VidHZubzc4bDUzY2w4cGhAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230077be&color=%23fdf5e6" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
             </div>
@@ -213,7 +222,7 @@
             <h2 class="text-4xl font-bold mb-6 italic text-primary">Where to find us</h2>
             <p class="text-slate-600 mb-10 max-w-2xl mx-auto">We typically gather at Coral Bay Beach. Note that we meet at the <strong>rocky entrance</strong> side rather than the main sandy stretch.</p>
             
-            <div class="responsive-iframe-container map-height shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
+            <div class="responsive-iframe-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d204.362186086634!2d32.36437353493571!3d34.85476808525837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14e709002bc60d11%3A0x2368ebdf6a9da634!2sGood%20Weather%20Swimming%20-%20Coral%20Bay!5e1!3m2!1sen!2s!4v1766053815910!5m2!1sen!2s" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             
@@ -244,13 +253,13 @@
     </footer>
 
     <script>
-        // Navbar glass adjustment on scroll
+        // Navbar glass adjustment on scroll (for non-hidden states)
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
+            if (nav && window.scrollY > 50) {
                 nav.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
                 nav.classList.add('shadow-md');
-            } else {
+            } else if (nav) {
                 nav.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
                 nav.classList.remove('shadow-md');
             }
