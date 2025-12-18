@@ -13,9 +13,10 @@
 
         :root {
             --primary-blue: #004d7a;
+            --deep-navy: #002d4d; 
             --ocean-blue: #0077be;
-            --earth-brown: #8B4513;
-            --energy-red: #d90429;
+            --earth-brown: #8c7355; /* Updated to a muted, pastel-toned brown */
+            --energy-pink: #ff4d6d; 
             --sand: #fdf5e6;
         }
 
@@ -34,23 +35,25 @@
                         url('https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=2000') center/cover;
         }
 
-        /* Updated to sticky to prevent content overlap issues during high zoom */
+        /* Sticky header with fixed glass effect */
         .glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--earth-brown);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border-bottom: 1px solid rgba(140, 115, 85, 0.2);
             position: sticky;
             top: 0;
             z-index: 50;
+            transition: background-color 0.3s ease;
         }
 
-        .btn-red {
-            background-color: var(--energy-red);
+        .btn-pink {
+            background-color: var(--energy-pink);
             transition: all 0.3s ease;
         }
 
-        .btn-red:hover {
-            background-color: #b90422;
+        .btn-pink:hover {
+            background-color: #ff1a43;
             transform: scale(1.05);
         }
 
@@ -58,27 +61,23 @@
             border-color: var(--earth-brown);
         }
 
-        .text-brown {
-            color: var(--earth-brown);
-        }
-
         .bg-blue-custom {
             background-color: var(--primary-blue);
         }
 
         .whatsapp-pulse {
-            animation: pulse-red 2s infinite;
+            animation: pulse-pink 2s infinite;
         }
 
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(217, 4, 41, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(217, 4, 41, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(217, 4, 41, 0); }
+        @keyframes pulse-pink {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 77, 109, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
         }
 
         .calendar-container, .map-container {
             position: relative;
-            padding-bottom: 75%; /* Aspect ratio for mobile */
+            padding-bottom: 75%;
             height: 0;
             overflow: hidden;
             max-width: 100%;
@@ -86,7 +85,7 @@
 
         @media (min-width: 768px) {
             .calendar-container {
-                padding-bottom: 600px; /* Fixed height for desktop */
+                padding-bottom: 600px;
             }
             .map-container {
                 padding-bottom: 450px;
@@ -105,18 +104,18 @@
 <body class="text-slate-900">
 
     <!-- Navigation -->
-    <nav class="glass shadow-md">
+    <nav class="glass shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
                     <span class="text-2xl font-bold italic logo-font">
                         <span style="color: var(--primary-blue);">GWS</span> 
-                        <span style="color: var(--energy-red);">Coral Bay</span>
+                        <span style="color: var(--energy-pink);">Coral Bay</span>
                     </span>
                 </div>
                 
                 <div class="flex items-center">
-                    <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="btn-red text-white px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2">
+                    <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="btn-pink text-white px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2">
                         <i class="fab fa-whatsapp"></i> Join Group
                     </a>
                 </div>
@@ -130,10 +129,10 @@
             <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
                 <span class="text-white">Good Weather Swimming</span>
             </h1>
-            <p class="text-2xl md:text-3xl mb-4 font-bold italic h3" style="color: var(--energy-red);">Coral Bay, Peyia</p>
+            <p class="text-2xl md:text-3xl mb-4 font-bold italic h3" style="color: var(--energy-pink);">Coral Bay, Peyia</p>
             <p class="text-xl mb-10 font-light max-w-2xl mx-auto">An open community of swimmers enjoying the Mediterranean. No fees, no fuss—just good weather and great company.</p>
             
-            <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="whatsapp-pulse btn-red inline-flex items-center gap-3 text-white font-bold py-5 px-12 rounded-full text-xl shadow-2xl">
+            <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="whatsapp-pulse btn-pink inline-flex items-center gap-3 text-white font-bold py-5 px-12 rounded-full text-xl shadow-2xl">
                 <i class="fab fa-whatsapp text-2xl"></i> Join the WhatsApp Group
             </a>
             <p class="mt-4 text-sm opacity-80 italic">Click to join our open community chat</p>
@@ -142,35 +141,29 @@
 
     <!-- About Section -->
     <section id="about" class="py-24" style="background-color: var(--sand);">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="order-2 md:order-1">
-                    <h2 class="text-4xl font-bold mb-6 italic" style="color: var(--primary-blue);">Salt, Sun, and Community</h2>
-                    <div class="w-20 h-1 mb-8" style="background-color: var(--earth-brown);"></div>
-                    <p class="text-lg text-slate-700 mb-6 leading-relaxed">
-                        We are an <span class="font-bold" style="color: var(--energy-red);">Open Group</span> based at the beautiful Coral Bay beach in Peyia. Our mission is simple: to bring together people who love the sea.
-                    </p>
-                    <p class="text-lg text-slate-700 mb-8 leading-relaxed">
-                        Whether you're a local resident or just visiting Paphos for the week, you're welcome to dive in with us. We use our WhatsApp group to coordinate swims based on the best weather conditions.
-                    </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-4 rounded-xl border-l-4 border-brown bg-white shadow-sm">
-                            <i class="fas fa-unlock text-red-600 mb-2"></i>
-                            <h4 class="font-bold">Totally Free</h4>
-                            <p class="text-sm">No membership fees or hidden costs.</p>
-                        </div>
-                        <div class="p-4 rounded-xl border-l-4 border-brown bg-white shadow-sm">
-                            <i class="fas fa-cloud-sun text-blue-600 mb-2"></i>
-                            <h4 class="font-bold">Weather Based</h4>
-                            <p class="text-sm">We find the best windows to swim.</p>
-                        </div>
-                    </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-6 italic" style="color: var(--primary-blue);">Salt, Sun, and Community</h2>
+            <div class="w-20 h-1 mb-8 mx-auto" style="background-color: var(--earth-brown);"></div>
+            
+            <div class="space-y-6 text-center max-w-3xl mx-auto">
+                <p class="text-xl text-slate-700 leading-relaxed">
+                    Established in <span class="font-bold" style="color: var(--primary-blue);">2025</span>, we are an <span class="font-bold" style="color: var(--energy-pink);">Open Group</span> based at the beautiful Coral Bay beach in Peyia. Our mission is simple: to bring together people who love the sea.
+                </p>
+                <p class="text-xl text-slate-700 leading-relaxed">
+                    Whether you're a local resident or just visiting Paphos for the week, you're welcome to dive in with us. We use our WhatsApp group to coordinate swims based on the best weather conditions.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
+                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md" style="border-color: var(--earth-brown);">
+                    <i class="fas fa-unlock text-pink-600 text-2xl mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Totally Free</h4>
+                    <p class="text-slate-600">No membership fees or hidden costs. We swim for the joy of it.</p>
                 </div>
-                <div class="order-1 md:order-2 relative">
-                    <img src="https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?auto=format&fit=crop&q=80&w=800" alt="Coral Bay Swimming" class="rounded-2xl shadow-2xl border-8 border-white">
-                    <div class="absolute -top-4 -left-4 w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-center p-2 shadow-xl" style="background-color: var(--earth-brown);">
-                        Est. 2024
-                    </div>
+                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md" style="border-color: var(--earth-brown);">
+                    <i class="fas fa-cloud-sun text-blue-600 text-2xl mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Weather Based</h4>
+                    <p class="text-slate-600">We monitor the waves and wind to find the perfect swimming windows.</p>
                 </div>
             </div>
         </div>
@@ -185,7 +178,7 @@
                 Join our WhatsApp group for real-time announcements.
             </p>
             
-            <div class="calendar-container shadow-2xl rounded-3xl border-4 border-brown">
+            <div class="calendar-container shadow-2xl rounded-3xl border-4 overflow-hidden" style="border-color: var(--earth-brown);">
                 <iframe src="https://calendar.google.com/calendar/embed?src=06n95ljfn3l8v7goebtvno78l53cl8ph%40import.calendar.google.com&ctz=Asia%2FNicosia&hl=en" style="border: 0" frameborder="0" scrolling="no"></iframe>
             </div>
         </div>
@@ -201,12 +194,12 @@
             <div class="bg-white/10 p-8 rounded-3xl border border-white/20">
                 <h3 class="text-2xl font-bold mb-4">Group Rules</h3>
                 <ul class="text-left max-w-md mx-auto space-y-3 mb-8">
-                    <li><i class="fas fa-check text-red-500 mr-2"></i> Respect the sea and each other</li>
-                    <li><i class="fas fa-check text-red-500 mr-2"></i> All levels are welcome</li>
-                    <li><i class="fas fa-check text-red-500 mr-2"></i> Swim at your own risk</li>
-                    <li><i class="fas fa-check text-red-500 mr-2"></i> No spamming or advertising</li>
+                    <li><i class="fas fa-check text-pink-400 mr-2"></i> Respect the sea and each other</li>
+                    <li><i class="fas fa-check text-pink-400 mr-2"></i> All levels are welcome</li>
+                    <li><i class="fas fa-check text-pink-400 mr-2"></i> Swim at your own risk</li>
+                    <li><i class="fas fa-check text-pink-400 mr-2"></i> No spamming or advertising</li>
                 </ul>
-                <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="btn-red inline-block text-white font-bold py-4 px-10 rounded-xl text-lg w-full sm:w-auto">
+                <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="btn-pink inline-block text-white font-bold py-4 px-10 rounded-xl text-lg w-full sm:w-auto">
                     Join via WhatsApp
                 </a>
             </div>
@@ -219,44 +212,46 @@
             <h2 class="text-4xl font-bold mb-6 italic" style="color: var(--primary-blue);">Where to find us</h2>
             <p class="text-slate-600 mb-10 max-w-2xl mx-auto">We typically gather at Coral Bay Beach. Note that we meet at the <strong>rocky entrance</strong> side rather than the main sandy stretch.</p>
             
-            <div class="map-container shadow-2xl rounded-3xl border-4 border-brown overflow-hidden">
+            <div class="map-container shadow-2xl rounded-3xl border-4 overflow-hidden" style="border-color: var(--earth-brown);">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d204.36218004819048!2d32.364534877379896!3d34.854770516149216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sCoral%20Bay%20Beach!5e1!3m2!1sen!2s!4v1766047268724!5m2!1sen!2s" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             
             <div class="mt-10 flex flex-col items-center">
-                <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm border-t-4 border-red-600">
-                    <i class="fas fa-map-marker-alt text-4xl text-red-600 mb-4"></i>
+                <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm border-t-4 border-pink-500">
+                    <i class="fas fa-map-marker-alt text-4xl text-pink-500 mb-4"></i>
                     <h4 class="text-xl font-bold mb-2">Coral Bay Beach</h4>
                     <p class="text-slate-600 text-sm">Peyia, Paphos, Cyprus</p>
-                    <p class="text-earth-brown font-bold mt-2 italic text-sm">Meeting point: At the Rocky Entrance</p>
+                    <p class="font-bold mt-2 italic text-sm" style="color: var(--earth-brown);">Meeting point: At the Rocky Entrance</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 text-white" style="background-color: var(--primary-blue);">
+    <footer class="py-12 text-white" style="background-color: var(--deep-navy);">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="flex flex-col md:flex-row justify-between items-center border-b border-white/10 pb-8 mb-8">
                 <div class="text-2xl font-bold italic mb-4 md:mb-0 logo-font">
-                    GWS <span style="color: var(--energy-red);">Coral Bay</span>
+                    GWS <span style="color: var(--energy-pink);">Coral Bay</span>
                 </div>
                 <div class="text-sm opacity-70">
                     Peyia, Paphos, Cyprus
                 </div>
             </div>
-            <p class="text-blue-200 text-sm">Created for the love of the Mediterranean. Peyia, Cyprus.</p>
+            <p class="text-blue-100/70 text-sm">Created for the love of the Mediterranean. Peyia, Cyprus.</p>
         </div>
     </footer>
 
     <script>
-        // Navbar styling on scroll
+        // Navbar glass adjustment on scroll
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
-            if (window.scrollY > 20) {
-                nav.style.backgroundColor = "white";
-            } else {
+            if (window.scrollY > 50) {
                 nav.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
+                nav.classList.add('shadow-md');
+            } else {
+                nav.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+                nav.classList.remove('shadow-md');
             }
         });
     </script>
