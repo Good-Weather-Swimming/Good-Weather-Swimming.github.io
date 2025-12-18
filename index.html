@@ -15,7 +15,6 @@
             --primary-blue: #004d7a;
             --deep-navy: #002d4d; 
             --ocean-blue: #0077be;
-            --earth-brown: #8c7355; /* Updated to a muted, pastel-toned brown */
             --energy-pink: #ff4d6d; 
             --sand: #fdf5e6;
         }
@@ -40,7 +39,7 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px) saturate(180%);
             -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border-bottom: 1px solid rgba(140, 115, 85, 0.2);
+            border-bottom: 1px solid rgba(0, 77, 122, 0.1);
             position: sticky;
             top: 0;
             z-index: 50;
@@ -57,8 +56,9 @@
             transform: scale(1.05);
         }
 
-        .border-brown {
-            border-color: var(--earth-brown);
+        /* Replaced brown border with a soft blue/sand border */
+        .border-sand {
+            border-color: #e6dec9;
         }
 
         .bg-blue-custom {
@@ -143,7 +143,7 @@
     <section id="about" class="py-24" style="background-color: var(--sand);">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-4xl font-bold mb-6 italic" style="color: var(--primary-blue);">Salt, Sun, and Community</h2>
-            <div class="w-20 h-1 mb-8 mx-auto" style="background-color: var(--earth-brown);"></div>
+            <div class="w-20 h-1 mb-8 mx-auto bg-sky-500"></div>
             
             <div class="space-y-6 text-center max-w-3xl mx-auto">
                 <p class="text-xl text-slate-700 leading-relaxed">
@@ -155,12 +155,12 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
-                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md" style="border-color: var(--earth-brown);">
+                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400">
                     <i class="fas fa-unlock text-pink-600 text-2xl mb-4"></i>
                     <h4 class="font-bold text-lg mb-2">Totally Free</h4>
                     <p class="text-slate-600">No membership fees or hidden costs. We swim for the joy of it.</p>
                 </div>
-                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md" style="border-color: var(--earth-brown);">
+                <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400">
                     <i class="fas fa-cloud-sun text-blue-600 text-2xl mb-4"></i>
                     <h4 class="font-bold text-lg mb-2">Weather Based</h4>
                     <p class="text-slate-600">We monitor the waves and wind to find the perfect swimming windows.</p>
@@ -178,8 +178,13 @@
                 Join our WhatsApp group for real-time announcements.
             </p>
             
-            <div class="calendar-container shadow-2xl rounded-3xl border-4 overflow-hidden" style="border-color: var(--earth-brown);">
-                <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Asia%2FNicosia&showPrint=0&showTz=0&showTabs=0&mode=WEEK&showDate=0&showNav=0&showTitle=0&showCalendars=0&hl=en&src=M2U3ODcyYWJmMjI1MmNiYWU5Yjc5NGNkMTJiMmNlNjZhOTk5NWFmZTJiYjIwYTk3MmUyODk3NmZlNzMyNGZkNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=MDZuOTVsamZuM2w4djdnb2VidHZubzc4bDUzY2w4cGhAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%237986cb&color=%23039be5" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+            <div class="calendar-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-100">
+                <!-- 
+                     Google Calendar Embed API Colors Swapped:
+                     color=%230077be (Ocean Blue for UI/Header)
+                     color=%23fdf5e6 (Sand Yellow for Events)
+                -->
+                <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Asia%2FNicosia&showPrint=0&showTz=0&showTabs=0&mode=WEEK&showDate=0&showNav=0&showTitle=0&showCalendars=0&hl=en&src=M2U3ODcyYWJmMjI1MmNiYWU5Yjc5NGNkMTJiMmNlNjZhOTk5NWFmZTJiYjIwYTk3MmUyODk3NmZlNzMyNGZkNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=MDZuOTVsamZuM2w4djdnb2VidHZubzc4bDUzY2w4cGhAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230077be&color=%23fdf5e6" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
             </div>
         </div>
     </section>
@@ -199,7 +204,7 @@
                     <li><i class="fas fa-check text-pink-400 mr-2"></i> Swim at your own risk</li>
                     <li><i class="fas fa-check text-pink-400 mr-2"></i> No spamming or advertising</li>
                 </ul>
-                <a href="https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau" target="_blank" class="btn-pink inline-block text-white font-bold py-4 px-10 rounded-xl text-lg w-full sm:w-auto">
+                <a href="https://chat.whatsapp.com/LW7HuuSKNr (continued)" target="_blank" class="btn-pink inline-block text-white font-bold py-4 px-10 rounded-xl text-lg w-full sm:w-auto">
                     Join via WhatsApp
                 </a>
             </div>
@@ -212,7 +217,7 @@
             <h2 class="text-4xl font-bold mb-6 italic" style="color: var(--primary-blue);">Where to find us</h2>
             <p class="text-slate-600 mb-10 max-w-2xl mx-auto">We typically gather at Coral Bay Beach. Note that we meet at the <strong>rocky entrance</strong> side rather than the main sandy stretch.</p>
             
-            <div class="map-container shadow-2xl rounded-3xl border-4 overflow-hidden" style="border-color: var(--earth-brown);">
+            <div class="map-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-100">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d204.362186086634!2d32.36437353493571!3d34.85476808525837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14e709002bc60d11%3A0x2368ebdf6a9da634!2sGood%20Weather%20Swimming%20-%20Coral%20Bay!5e1!3m2!1sen!2s!4v1766053815910!5m2!1sen!2s" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             
@@ -221,7 +226,7 @@
                     <i class="fas fa-map-marker-alt text-4xl text-pink-500 mb-4"></i>
                     <h4 class="text-xl font-bold mb-2">Coral Bay Beach</h4>
                     <p class="text-slate-600 text-sm">Peyia, Paphos, Cyprus</p>
-                    <p class="font-bold mt-2 italic text-sm" style="color: var(--earth-brown);">Meeting point: At the Rocky Entrance</p>
+                    <p class="font-bold mt-2 italic text-sm text-sky-600">Meeting point: At the Rocky Entrance</p>
                 </div>
             </div>
         </div>
