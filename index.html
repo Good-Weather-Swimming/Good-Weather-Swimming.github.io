@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Good Weather Swimming Coral Bay</title>
+    <!-- Favicon using Swimming Emoji -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏊</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -32,10 +34,14 @@
                         url('https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=2000') center/cover;
         }
 
+        /* Updated to sticky to prevent content overlap issues during high zoom */
         .glass {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--earth-brown);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .btn-red {
@@ -99,7 +105,7 @@
 <body class="text-slate-900">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass shadow-md">
+    <nav class="glass shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
@@ -119,8 +125,8 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="relative h-screen flex items-center justify-center text-center text-white hero-gradient">
-        <div class="max-w-4xl px-4">
+    <section id="home" class="relative min-h-screen flex items-center justify-center text-center text-white hero-gradient">
+        <div class="max-w-4xl px-4 py-20">
             <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
                 <span class="text-white">Good Weather Swimming</span>
             </h1>
@@ -244,7 +250,7 @@
     </footer>
 
     <script>
-        // Navbar shadow on scroll
+        // Navbar styling on scroll
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
             if (window.scrollY > 20) {
