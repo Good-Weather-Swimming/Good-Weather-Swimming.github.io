@@ -123,6 +123,7 @@
         }
 
         .responsive-iframe-container iframe {
+            border: 0;
             position: absolute;
             top: 0;
             left: 0;
@@ -209,8 +210,15 @@
             </p>
             
             <div class="responsive-iframe-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
-                <!-- Google Calendar Embed API -->
-                <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Asia%2FNicosia&showPrint=0&showTz=0&showTabs=0&mode=WEEK&showDate=0&showNav=0&showTitle=0&showCalendars=0&hl=en&src=M2U3ODcyYWJmMjI1MmNiYWU5Yjc5NGNkMTJiMmNlNjZhOTk5NWFmZTJiYjIwYTk3MmUyODk3NmZlNzMyNGZkNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=MDZuOTVsamZuM2w4djdnb2VidHZubzc4bDUzY2w4cGhAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230077be&color=%23fdf5e6" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                <iframe id="open-web-calendar" 
+                    src="https://open-web-calendar.hosted.quelltext.eu/calendar.html?css=.CALENDAR-INDEX-0%2C%20.CALENDAR-INDEX-0%20.dhx_body%2C%20.CALENDAR-INDEX-0%20.dhx_title%20%20%7B%20background-color%3A%20%23004d7a%3B%20color%3A%20white%3B%20%7D%20%0A.CALENDAR-INDEX-1%2C%20.CALENDAR-INDEX-1%20.dhx_body%2C%20.CALENDAR-INDEX-1%20.dhx_title%20%20%7B%20background-color%3A%20%23ff4d6d%3B%20color%3A%20white%3B%20%7D%20%0A&amp;ending_hour=20&amp;event_url_geo=https%3A%2F%2Fwww.google.com%2Fmaps%2F%40%7Blat%7D%2C%7Blon%7D%2C%7Bzoom%7Dz&amp;event_url_location=https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%7Blocation%7D&amp;loader=&amp;menu_shows_calendar_names=false&amp;menu_shows_description=false&amp;menu_shows_title=false&amp;starting_hour=5&amp;tab=week&amp;tabs=week&amp;tabs=day&amp;timezone=Asia%2FNicosia&amp;title=Good%20Weather%20Swimming&amp;url=https%3A%2F%2Frezerv.it%2Fweather%2Fv1%2Fforecast%3Flatitude%3D34.884468%26longitude%3D32.367428%26preset%3Dopenwater_swimming&amp;url=https%3A%2F%2Fcalendar.google.com%2Fcalendar%2Fical%2F3e7872abf2252cbae9b794cd12b2ce66a9995afe2bb20a972e28976fe7324fd4%2540group.calendar.google.com%2Fpublic%2Fbasic.ics"
+                    sandbox="allow-scripts allow-same-origin allow-top-navigation allow-downloads"
+                    allowTransparency="true" 
+                    scrolling="no" 
+                    frameborder="0" 
+                    height="823px" 
+                    width="100%">
+                </iframe>                
             </div>
         </div>
     </section>
@@ -244,7 +252,7 @@
             <p class="text-slate-600 mb-10 max-w-2xl mx-auto">We typically gather at Coral Bay Beach. Note that we meet at the <strong>rocky entrance</strong> side rather than the main sandy stretch.</p>
             
             <div class="responsive-iframe-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d204.362186086634!2d32.36437353493571!3d34.85476808525837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14e709002bc60d11%3A0x2368ebdf6a9da634!2sGood%20Weather%20Swimming%20-%20Coral%20Bay!5e1!3m2!1sen!2s!4v1766053815910!5m2!1sen!2s" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d204.362186086634!2d32.36437353493571!3d34.85476808525837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14e709002bc60d11%3A0x2368ebdf6a9da634!2sGood%20Weather%20Swimming%20-%20Coral%20Bay!5e1!3m2!1sen!2s!4v1766053815910!5m2!1sen!2s" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             
             <div class="mt-10 flex flex-col items-center">
