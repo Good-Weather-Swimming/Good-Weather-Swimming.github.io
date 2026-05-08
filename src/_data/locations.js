@@ -3,9 +3,9 @@ module.exports = {
     {
       id: "peyia",
       name: "Peyia",
-      urlPath: "/cyprus-peyia/",
+      urlPath: "/peyia/",
       description: "Western shores of Paphos with beautiful sandy and rocky beaches",
-      whatsappGroup: "https://chat.whatsapp.com/AREA-PEYIA", // Area-level group
+      whatsappGroup: "https://chat.whatsapp.com/Fz2UKMPTm5q0ABkD2Oz89I",
       region: "Paphos, Cyprus"
     }
   ],
