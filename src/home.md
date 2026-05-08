@@ -87,11 +87,9 @@ isHome: true
         <i class="fab fa-whatsapp text-6xl mb-8 text-white"></i>
         <h2 class="text-4xl font-bold mb-6 italic text-white">Join Our Community</h2>
         <p class="text-xl mb-10 opacity-90">Connect with swimmers across all our locations. Join our main WhatsApp group to stay in the loop about opportunities and updates.</p>
-        
-        <a href="https://chat.whatsapp.com/MAIN-COMMUNITY" target="_blank" class="btn-pink inline-flex items-center justify-center gap-3 font-bold py-4 px-12 rounded-xl text-lg hover:shadow-lg transition-all">
+        <a href="https://chat.whatsapp.com/FUTD7w2EH2742L1HvYyu1o" target="_blank" class="btn-pink inline-flex items-center justify-center gap-3 font-bold py-4 px-12 rounded-xl text-lg hover:shadow-lg transition-all">
             <i class="fab fa-whatsapp text-2xl"></i> Join Main Community Group
         </a>
-        
         <p class="mt-8 text-sm opacity-80">Or explore our regions above to join area-specific and location-specific groups.</p>
     </div>
 </section>
