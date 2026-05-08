@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ location.name }} | Good Weather Swimming | Open Water Community</title>
-    
+    <title>{% if location.name %}{{ location.name }} | {% endif %}Good Weather Swimming</title>
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="Join Good Weather Swimming at {{ location.name }}, {{ location.region }}. A free open-water swimming community. Check our weather-based schedule and dive in!">
     <meta name="keywords" content="Swimming {{ location.name }}, Open Water Swimming, Swimming Group, Sea Swimming, Good Weather Swimming">
