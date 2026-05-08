@@ -7,17 +7,6 @@ pagination:
 permalink: "{{ location.urlPath }}"
 ---
 
-<!-- Location Hero Section -->
-<section class="py-16 bg-gradient-to-b from-primary/80 to-primary/60 text-white">
-    <div class="max-w-4xl mx-auto px-4 py-12 text-center">
-        <h1 class="text-5xl md:text-6xl font-bold mb-4">{{ location.name }}</h1>
-        <p class="text-lg md:text-xl opacity-90 mb-4">{{ location.description }}</p>
-        <a href="/{{ location.areaId }}/" class="text-white/80 hover:text-white underline flex items-center justify-center gap-1 text-sm">
-            <i class="fas fa-arrow-left"></i> Back to {{ "Peyia" if location.areaId == "peyia" else "Area" }}
-        </a>
-    </div>
-</section>
-
 <!-- About This Beach -->
 <section class="section-padding bg-sand">
     <div class="max-w-4xl mx-auto px-4 text-center">
@@ -26,7 +15,7 @@ permalink: "{{ location.urlPath }}"
         
         <div class="space-y-6 text-center max-w-3xl mx-auto">
             <p class="text-xl text-slate-700 leading-relaxed">
-                {{ location.name }} is one of our favorite swimming destinations. We gather here regularly to enjoy the Mediterranean waters and build community with fellow swimmers.
+                {{ location.description }}
             </p>
             <p class="text-xl text-slate-700 leading-relaxed">
                 All levels are welcome—whether you're a seasoned open water swimmer or trying it for the first time, join us for an unforgettable experience.
