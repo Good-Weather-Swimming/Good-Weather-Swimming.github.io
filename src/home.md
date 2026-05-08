@@ -2,7 +2,7 @@
 layout: base.html
 permalink: /
 location:
-  name: Good Weather Swimming
+  name: ""
   urlPath: /
   whatsappGroup: https://chat.whatsapp.com/FUTD7w2EH2742L1HvYyu1o
 isHome: true
