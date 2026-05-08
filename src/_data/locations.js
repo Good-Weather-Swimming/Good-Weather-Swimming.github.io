@@ -14,7 +14,7 @@ module.exports = {
       id: "coral-bay",
       areaId: "peyia",
       name: "Coral Bay",
-      urlPath: "/cyprus-peyia-coral-bay-beach/",
+      urlPath: "/peyia-coral-bay-beach/",
       region: "Peyia, Paphos",
       coordinates: {
         lat: 34.853807656535146,
@@ -31,7 +31,7 @@ module.exports = {
       id: "laourou-beach",
       areaId: "peyia",
       name: "Laourou Beach",
-      urlPath: "/cyprus-peyia-laourou-beach/",
+      urlPath: "/peyia-laourou-beach/",
       region: "Peyia, Paphos",
       coordinates: {
         lat: 34.8847,
