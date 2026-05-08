@@ -4,7 +4,7 @@ permalink: /
 location:
   name: Good Weather Swimming
   urlPath: /
-  whatsappGroup: https://chat.whatsapp.com/MAIN-COMMUNITY
+  whatsappGroup: https://chat.whatsapp.com/FUTD7w2EH2742L1HvYyu1o
 isHome: true
 ---
 
