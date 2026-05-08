@@ -51,7 +51,7 @@ isHome: true
         <div class="w-20 h-1 mb-12 mx-auto bg-sky-500"></div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {%- for area in areas.areas %}
+            {%- for area in locations.areas %}
             <div class="bg-gradient-to-br from-blue-50 to-sand rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 <div class="h-64 bg-gradient-to-b from-sky-300 to-blue-400 flex items-center justify-center">
                     <div class="text-6xl">🏝️</div>
