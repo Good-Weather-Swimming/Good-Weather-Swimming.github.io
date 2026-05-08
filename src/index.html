@@ -1,0 +1,110 @@
+---
+layout: base.html
+pagination:
+  data: locations.locations
+  size: 1
+  alias: location
+permalink: "{{ location.urlPath }}"
+---
+
+<!-- About Section -->
+<section id="about" class="section-padding bg-sand">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6 italic text-primary">Salt, Sun, and Community</h2>
+        <div class="w-20 h-1 mb-8 mx-auto bg-sky-500"></div>
+        
+        <div class="space-y-6 text-center max-w-3xl mx-auto">
+            <p class="text-xl text-slate-700 leading-relaxed">
+                Established in <span class="font-bold text-primary">2025</span>, we are an <span class="font-bold text-pink">Open Group</span> based at the beautiful {{ location.name }} beach in {{ location.region }}. Our mission is simple: to bring together people who love the sea.
+            </p>
+            <p class="text-xl text-slate-700 leading-relaxed">
+                Whether you're a local resident or just visiting Paphos for the week, you're welcome to dive in with us. We use our WhatsApp group to coordinate swims based on the best weather conditions.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
+            <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
+                <i class="fas fa-unlock text-pink-600 text-2xl mb-4"></i>
+                <h4 class="font-bold text-lg mb-2">Totally Free</h4>
+                <p class="text-slate-600">No membership fees or hidden costs. We swim for the joy of it.</p>
+            </div>
+            <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
+                <i class="fas fa-cloud-sun text-blue-600 text-2xl mb-4"></i>
+                <h4 class="font-bold text-lg mb-2">Weather Based</h4>
+                <p class="text-slate-600">We monitor the waves and wind to find the perfect swimming windows.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Calendar Section -->
+<section id="calendar" class="section-padding bg-white">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6 italic text-primary">Swim Schedule</h2>
+        <p class="text-slate-600 mb-10 max-w-2xl mx-auto">
+            Our calendar is automatically updated using weather data to identify the <strong>best windows of good weather</strong> for swimming at {{ location.name }}. 
+            Join our WhatsApp group for real-time announcements.
+        </p>
+        
+        <div class="responsive-iframe-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft">
+            <iframe id="open-web-calendar" 
+                src="https://open-web-calendar.hosted.quelltext.eu/calendar.html?css=.CALENDAR-INDEX-0%2C%20.CALENDAR-INDEX-0%20.dhx_body%2C%20.CALENDAR-INDEX-0%20.dhx_title%20%20%7B%20background-color%3A%20%23fdf5e6%3B%20color%3A%20%23000000%3B%20%7D%20%0A.CALENDAR-INDEX-1%2C%20.CALENDAR-INDEX-1%20.dhx_body%2C%20.CALENDAR-INDEX-1%20.dhx_title%20%20%7B%20background-color%3A%20%23ff4d6d%3B%20color%3A%20white%3B%20%7D%20%0A&amp;ending_hour=20&amp;event_url_geo=https%3A%2F%2Fwww.google.com%2Fmaps%2F%40%7Blat%7D%2C%7Blon%7D%2C%7Bzoom%7Dz&amp;event_url_location=https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%7Blocation%7D&amp;loader=&amp;menu_shows_calendar_names=false&amp;menu_shows_description=false&amp;menu_shows_title=false&amp;starting_hour=5&amp;tab=week&amp;tabs=week&amp;tabs=day&amp;timezone=Asia%2FNicosia&amp;title=Good%20Weather%20Swimming&amp;url={{ location.weatherDataUrl | urlencode }}&amp;url=https%3A%2F%2Fcalendar.google.com%2Fcalendar%2Fical%2F3e7872abf2252cbae9b794cd12b2ce66a9995afe2bb20a972e28976fe7324fd4%2540group.calendar.google.com%2Fpublic%2Fbasic.ics"
+                sandbox="allow-scripts allow-same-origin allow-top-navigation allow-downloads"
+                allowTransparency="true" 
+                scrolling="no" 
+                frameborder="0" 
+                height="823px" 
+                width="100%">
+            </iframe>                
+        </div>
+    </div>
+</section>
+
+<!-- Location -->
+<section id="location" class="section-padding bg-sand">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6 italic text-primary text-center">Where to find us</h2>
+        
+        <div class="mb-10 max-w-2xl mx-auto">
+            <p class="text-slate-700 text-lg mb-4">
+                We gather at <strong>{{ location.name }} Beach</strong>. {{ location.meetingNotes }}
+            </p>
+            <div class="p-6 bg-white rounded-2xl shadow-sm border border-sand-border inline-block w-full">
+                <h4 class="text-xl font-bold mb-2 text-primary flex items-center justify-center gap-2">
+                    <i class="fas fa-map-marked-alt text-pink-500"></i> Meeting Instructions
+                </h4>
+                <p class="text-slate-600 font-medium italic">"Decided on the spot"</p>
+                <p class="text-sm mt-3 text-slate-700 leading-relaxed">
+                    {{ location.meetingNotes }}
+                </p>
+            </div>
+        </div>
+        
+        <!-- Street Map View -->
+        <div class="responsive-iframe-container shadow-2xl rounded-3xl border-4 overflow-hidden border-sky-soft bg-white">
+            <iframe src="{{ location.googleMapsEmbed }}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</section>
+
+<!-- Join Group Section -->
+<section id="join" class="py-20 bg-primary text-white text-center">
+    <div class="max-w-3xl mx-auto px-4">
+        <i class="fab fa-whatsapp text-6xl mb-8 text-white"></i>
+        <h2 class="text-4xl font-bold mb-6 italic text-white">Don't Swim Alone!</h2>
+        <p class="text-xl mb-10 opacity-90">Join our WhatsApp group to see when the next group is heading into the water. We use the group to confirm swim windows based on the latest weather forecasts.</p>
+        
+        <div class="bg-white/10 p-8 rounded-3xl border border-white/20">
+            <h3 class="text-2xl font-bold mb-4 text-white">Group Rules</h3>
+            <ul class="text-left max-w-md mx-auto space-y-3 mb-8">
+                <li><i class="fas fa-check text-pink-400 mr-2"></i> Respect the sea and each other</li>
+                <li><i class="fas fa-check text-pink-400 mr-2"></i> All levels are welcome</li>
+                <li><i class="fas fa-check text-pink-400 mr-2"></i> Swim at your own risk</li>
+                <li><i class="fas fa-check text-pink-400 mr-2"></i> No spamming or advertising</li>
+            </ul>
+            <a href="{{ location.whatsappGroup }}" target="_blank" class="btn-pink inline-block font-bold py-4 px-10 rounded-xl text-lg w-full sm:w-auto">
+                Join via WhatsApp
+            </a>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,24 @@
+{
+  "name": "good-weather-swimming",
+  "version": "1.0.0",
+  "description": "Weather-based open water swimming community website",
+  "main": "index.js",
+  "scripts": {
+    "build": "eleventy",
+    "watch": "eleventy --watch",
+    "serve": "eleventy --serve",
+    "debug": "DEBUG=Eleventy* eleventy"
+  },
+  "keywords": [
+    "swimming",
+    "open-water",
+    "cyprus",
+    "peyia",
+    "weather"
+  ],
+  "author": "Good Weather Swimming",
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
