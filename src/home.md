@@ -28,7 +28,7 @@ isHome: true
         
         <div class="space-y-6 text-center max-w-3xl mx-auto">
             <p class="text-xl text-slate-700 leading-relaxed">
-                Established in <span class="font-bold text-primary">2025</span>, we are an <span class="font-bold text-pink">Open Group</span> of passionate swimmers in Cyprus. Our mission is simple: to bring together people who love the open water swimming.
+                Established in <span class="font-bold text-primary">2025</span>, we are an <span class="font-bold text-pink">Open Group</span> of passionate swimmers. Our mission is simple: to bring together people who love open water swimming.
             </p>
             <p class="text-xl text-slate-700 leading-relaxed">
                 Whether you're a local resident or just visiting, you're welcome to dive in with us. We use dedicated WhatsApp groups at different levels—community-wide, area-specific, or location-specific—so you can stay connected however you prefer.
