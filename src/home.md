@@ -8,6 +8,18 @@ location:
 isHome: true
 ---
 
+<!-- Hero Section -->
+<section id="home" class="relative min-h-screen flex items-center justify-center text-center text-white hero-gradient">
+    <div class="max-w-4xl px-4 py-20">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white">Good Weather Swimming</h1>
+        <p class="text-xl mb-10 font-light max-w-2xl mx-auto">An open community of swimmers enjoying the Mediterranean. No fees, no fuss—just good weather and great company.</p>
+        <a href="{{ location.whatsappGroup }}" target="_blank" class="whatsapp-pulse btn-pink inline-flex items-center gap-3 font-bold py-5 px-12 rounded-full text-xl shadow-2xl">
+            <i class="fab fa-whatsapp text-2xl"></i> Join the WhatsApp Group
+        </a>
+        <p class="mt-4 text-sm opacity-80 italic">Click to join our open community chat</p>
+    </div>
+</section>
+
 <!-- About Section -->
 <section id="about" class="section-padding bg-sand">
     <div class="max-w-4xl mx-auto px-4 text-center">
