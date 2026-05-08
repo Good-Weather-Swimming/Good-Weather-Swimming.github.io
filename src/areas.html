@@ -1,0 +1,95 @@
+---
+layout: base.html
+pagination:
+  data: locations.areas
+  size: 1
+  alias: area
+permalink: "/cyprus-{{ area.id }}/"
+location: "{{ area }}"
+---
+
+<!-- Area Hero Section -->
+<section class="py-20 bg-gradient-to-b from-primary/90 to-primary text-white text-center">
+    <div class="max-w-4xl px-4 py-20">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">{{ area.name }}</h1>
+        <p class="text-xl md:text-2xl mb-4 font-light">{{ area.description }}</p>
+    </div>
+</section>
+
+<!-- About Area Section -->
+<section class="section-padding bg-sand">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6 italic text-primary">Discover {{ area.name }}</h2>
+        <div class="w-20 h-1 mb-8 mx-auto bg-sky-500"></div>
+        
+        <div class="space-y-6 text-center max-w-3xl mx-auto mb-12">
+            <p class="text-xl text-slate-700 leading-relaxed">
+                {{ area.name }} is home to some of the most beautiful and accessible swimming spots in Paphos. Our community has established regular swim groups across multiple beaches in this region.
+            </p>
+            <p class="text-xl text-slate-700 leading-relaxed">
+                Whether you prefer sandy shores or rocky coves, calm bays or open water, there's a perfect spot for you in {{ area.name }}.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
+                <i class="fas fa-wave-square text-blue-600 text-2xl mb-4"></i>
+                <h4 class="font-bold text-lg mb-2">Perfect Conditions</h4>
+                <p class="text-slate-600">Year-round swimming with Mediterranean warmth and generally calm waters.</p>
+            </div>
+            <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
+                <i class="fas fa-compass text-pink-600 text-2xl mb-4"></i>
+                <h4 class="font-bold text-lg mb-2">Multiple Beaches</h4>
+                <p class="text-slate-600">Variety of swimming spots, each with unique characteristics and conditions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Beaches in This Area Section -->
+<section class="section-padding bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-6 italic text-primary text-center">Beaches in {{ area.name }}</h2>
+        <div class="w-20 h-1 mb-12 mx-auto bg-sky-500"></div>
+        
+        {%- set areaLocations = locations.locations | selectattr('areaId', 'equalto', area.id) | list %}
+        <div class="grid grid-cols-1 md:grid-cols-{{ areaLocations.length }} gap-8">
+            {%- for loc in areaLocations %}
+            <div class="bg-gradient-to-br from-sky-50 to-blue-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div class="h-48 bg-gradient-to-b from-sky-400 to-blue-500 flex items-center justify-center">
+                    <div class="text-5xl">🏖️</div>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-primary mb-3">{{ loc.name }}</h3>
+                    <p class="text-slate-700 mb-6">{{ loc.description }}</p>
+                    
+                    <div class="space-y-3 mb-6">
+                        <a href="{{ loc.urlPath }}" class="btn-pink block text-center px-6 py-3 rounded-lg font-bold hover:shadow-lg transition-all">
+                            View Details & Schedule
+                        </a>
+                        <a href="{{ loc.whatsappGroup }}" target="_blank" class="block text-center px-6 py-3 rounded-lg font-bold border-2 border-pink-500 text-pink-600 hover:bg-pink-50 transition-all">
+                            <i class="fab fa-whatsapp mr-2"></i> Location Group
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {%- endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Area WhatsApp Section -->
+<section class="py-20 bg-primary text-white text-center">
+    <div class="max-w-3xl mx-auto px-4">
+        <i class="fab fa-whatsapp text-6xl mb-8 text-white"></i>
+        <h2 class="text-4xl font-bold mb-6 italic text-white">Connect with {{ area.name }} Swimmers</h2>
+        <p class="text-xl mb-10 opacity-90">Join our {{ area.name }} WhatsApp group to stay informed about swimming conditions across all beaches in this region. Get real-time updates and coordinate swims with our growing community.</p>
+        
+        <div class="bg-white/10 p-8 rounded-3xl border border-white/20 inline-block">
+            <a href="{{ area.whatsappGroup }}" target="_blank" class="btn-pink inline-flex items-center justify-center gap-3 font-bold py-4 px-12 rounded-xl text-lg hover:shadow-lg transition-all">
+                <i class="fab fa-whatsapp text-2xl"></i> Join {{ area.name }} WhatsApp Group
+            </a>
+            <p class="text-sm mt-4 opacity-80">Prefer location-specific updates? Join a beach group from above.</p>
+        </div>
+    </div>
+</section>
