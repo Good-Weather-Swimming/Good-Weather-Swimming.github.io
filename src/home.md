@@ -12,7 +12,7 @@ isHome: true
 <section id="home" class="relative min-h-screen flex items-center justify-center text-center text-white hero-gradient">
     <div class="max-w-4xl px-4 py-20">
         <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white">Good Weather Swimming</h1>
-        <p class="text-xl mb-10 font-light max-w-2xl mx-auto">An open community of swimmers enjoying the Mediterranean. No fees, no fuss—just good weather and great company.</p>
+        <p class="text-xl mb-10 font-light max-w-2xl mx-auto">An open community of swimmers enjoying the open water. No fees, no fuss—just good weather and great company.</p>
         <a href="{{ location.whatsappGroup }}" target="_blank" class="whatsapp-pulse btn-pink inline-flex items-center gap-3 font-bold py-5 px-12 rounded-full text-xl shadow-2xl">
             <i class="fab fa-whatsapp text-2xl"></i> Join the WhatsApp Group
         </a>
@@ -28,7 +28,7 @@ isHome: true
         
         <div class="space-y-6 text-center max-w-3xl mx-auto">
             <p class="text-xl text-slate-700 leading-relaxed">
-                Established in <span class="font-bold text-primary">2025</span>, we are an <span class="font-bold text-pink">Open Group</span> of passionate swimmers in Cyprus. Our mission is simple: to bring together people who love the sea and the Mediterranean lifestyle.
+                Established in <span class="font-bold text-primary">2025</span>, we are an <span class="font-bold text-pink">Open Group</span> of passionate swimmers in Cyprus. Our mission is simple: to bring together people who love the open water swimming.
             </p>
             <p class="text-xl text-slate-700 leading-relaxed">
                 Whether you're a local resident or just visiting, you're welcome to dive in with us. We use dedicated WhatsApp groups at different levels—community-wide, area-specific, or location-specific—so you can stay connected however you prefer.
