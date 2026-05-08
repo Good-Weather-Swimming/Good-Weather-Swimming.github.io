@@ -58,23 +58,23 @@ isHome: true
 <!-- Areas Section -->
 <section id="areas" class="section-padding bg-white">
     <div class="max-w-5xl mx-auto px-4">
-        <h2 class="text-4xl font-bold mb-6 italic text-primary text-center">Our Regions</h2>
+        <h2 class="text-4xl font-bold mb-6 italic text-primary text-center">Our Areas</h2>
         <div class="w-20 h-1 mb-12 mx-auto bg-sky-500"></div>
-        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {%- for area in locations.areas %}
-            <div class="bg-gradient-to-br from-blue-50 to-sand rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                <div class="h-64 bg-gradient-to-b from-sky-300 to-blue-400 flex items-center justify-center">
-                    <div class="text-6xl">🏝️</div>
-                </div>
-                <div class="p-8">
-                    <h3 class="text-2xl font-bold text-primary mb-3">{{ area.name }}</h3>
-                    <p class="text-slate-600 mb-2"><i class="fas fa-map-pin text-pink-500 mr-2"></i>{{ area.region }}</p>
-                    <p class="text-slate-700 mb-6">{{ area.description }}</p>
-                    <a href="{{ area.urlPath }}" class="btn-pink inline-block px-8 py-3 rounded-lg font-bold hover:shadow-lg transition-all">
-                        Explore Beaches <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
+            <div class="py-6">
+                <h3 class="text-2xl font-bold text-primary mb-2">
+                    {{ area.name }}
+                </h3>
+                <p class="text-slate-600 mb-2">
+                    {{ area.region }}
+                </p>
+                <p class="text-slate-700 mb-4">
+                    {{ area.description }}
+                </p>
+                <a href="{{ area.urlPath }}" class="btn-pink inline-block px-6 py-3 rounded-lg font-bold">
+                    Explore Spots
+                </a>
             </div>
             {%- endfor %}
         </div>
@@ -90,7 +90,7 @@ isHome: true
         <a href="https://chat.whatsapp.com/FUTD7w2EH2742L1HvYyu1o" target="_blank" class="btn-pink inline-flex items-center justify-center gap-3 font-bold py-4 px-12 rounded-xl text-lg hover:shadow-lg transition-all">
             <i class="fab fa-whatsapp text-2xl"></i> Join Main Community Group
         </a>
-        <p class="mt-8 text-sm opacity-80">Or explore our regions above to join area-specific and location-specific groups.</p>
+        <p class="mt-8 text-sm opacity-80">Or explore our areas above to join area-specific and location-specific groups.</p>
     </div>
 </section>
 
