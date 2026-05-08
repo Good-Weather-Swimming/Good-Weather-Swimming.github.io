@@ -3,7 +3,6 @@ layout: base.html
 permalink: /
 location:
   name: Good Weather Swimming
-  region: Peyia, Paphos
   urlPath: /
   whatsappGroup: https://chat.whatsapp.com/MAIN-COMMUNITY
 isHome: true
@@ -20,7 +19,7 @@ isHome: true
                 Established in <span class="font-bold text-primary">2025</span>, we are an <span class="font-bold text-pink">Open Group</span> of passionate swimmers in Cyprus. Our mission is simple: to bring together people who love the sea and the Mediterranean lifestyle.
             </p>
             <p class="text-xl text-slate-700 leading-relaxed">
-                Whether you're a local resident or just visiting Paphos, you're welcome to dive in with us. We use dedicated WhatsApp groups at different levels—community-wide, area-specific, or location-specific—so you can stay connected however you prefer.
+                Whether you're a local resident or just visiting, you're welcome to dive in with us. We use dedicated WhatsApp groups at different levels—community-wide, area-specific, or location-specific—so you can stay connected however you prefer.
             </p>
         </div>
 
