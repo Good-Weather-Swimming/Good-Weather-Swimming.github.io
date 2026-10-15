@@ -1,25 +1,40 @@
-# Issue 03: Implement Safety Alert System
+# Issue 03: Implement a safety alert system
 
-## Description
-The site lacks a safety alert system to warn swimmers of hazardous conditions such as high waves, cold water, storms, and extreme UV index. Safety alerts are critical for user safety and site credibility.
+## Problem
+The site currently has no safety warning system for hazardous swimming conditions such as high waves, cold water, storms, or extreme UV exposure.
+
+## Goal
+Provide a clear, threshold-based alert system that helps users quickly understand whether a location is safe or risky for swimming.
+
+## User impact
+Without safety warnings, swimmers may underestimate risk and visit locations in unsuitable conditions. This can lead to poor user experience and possible safety concerns.
 
 ## Requirements
-- Create dashboard that flags hazardous conditions:
-  - High wave height (>1.5m)
-  - Cold water temperature (<18°C for cold water risk)
-  - Extreme UV index (>8 for extreme danger)
-  - Storm warnings (high wind + precipitation)
-- Display alerts prominently on location pages
-- Integrate with calendar and search features
-- Use threshold-based alert levels (Green/Yellow/Red)
+- Define safety thresholds for key conditions, including:
+  - wave height
+  - water temperature
+  - wind conditions
+  - UV index
+  - precipitation/storm risk
+- Create a warning model with clear alert levels such as Green, Yellow, and Red.
+- Display alerts prominently on location pages.
+- Integrate the alert state with calendar and filtering logic where relevant.
+- Ensure the system updates based on the latest forecast data.
 
-## Acceptance Criteria
-- [ ] Safety dashboard created with hazard detection
-- [ ] Threshold-based alert system implemented
-- [ ] Alerts displayed on location pages
-- [ ] Alerts integrated with calendar and search
-- [ ] Visual indicators for different alert levels
-- [ ] Real-time updates based on weather data
+## Acceptance criteria
+- [ ] Safety conditions are evaluated using project thresholds.
+- [ ] Alerts are displayed clearly on each location page.
+- [ ] The warning system supports multiple severity levels.
+- [ ] The alert status is available to other features such as search and calendar views.
+- [ ] Data from Open-Meteo is used as the source of truth for the warnings.
+
+## Dependencies
+- Weather and marine data integration must be complete.
+- Frontend alert components must be designed and rendered consistently.
+- Threshold values should be reviewed with swim safety considerations in mind.
 
 ## Priority
 Medium
+
+## Estimated effort
+2-3 days.
