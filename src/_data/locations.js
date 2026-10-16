@@ -2,7 +2,20 @@ function openMeteoWeatherUrl(latitude, longitude) {
   return `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,weathercode,uv_index&daily=sunrise,sunset&timezone=UTC`;
 }
 
-function createListedBeach({ id, areaId, name, region, latitude, longitude, description, lifeguardSeason, safetySourceUrl }) {
+function commonsPhoto(filename, title, alt, credit, license, licenseUrl, sourceUrl, caption = '') {
+  return {
+    src: `/assets/beaches/${filename}`,
+    title,
+    alt,
+    credit,
+    license,
+    licenseUrl,
+    sourceUrl,
+    caption
+  };
+}
+
+function createListedBeach({ id, areaId, name, region, latitude, longitude, description, lifeguardSeason, safetySourceUrl, photo }) {
   return {
     id,
     areaId,
@@ -12,6 +25,7 @@ function createListedBeach({ id, areaId, name, region, latitude, longitude, desc
     coordinates: { lat: latitude, lng: longitude, zoom: 15 },
     googleMapsEmbed: `https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`,
     description,
+    photo,
     meetingNotes: "Use the public beach access; check posted flags and current lifeguard hours.",
     openMeteoLat: latitude,
     openMeteoLng: longitude,
@@ -79,6 +93,15 @@ module.exports = {
       meetingNotes: "Decided on the spot - choose between Left or Right side based on conditions",
       blueFlagSourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/coral-bay-beach-blue-flag/",
       lifeguardSeason: "April-October",
+      photo: commonsPhoto(
+        "coral-bay.jpg",
+        "Flickr - ronsaunders47 - CORAL BAY. PAPHOS CYPRUS.",
+        "Rocky Coral Bay shoreline and calm water in Peyia",
+        "Ronald Saunders",
+        "CC BY-SA 2.0",
+        "https://creativecommons.org/licenses/by-sa/2.0/",
+        "https://commons.wikimedia.org/wiki/File:Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg"
+      ),
       // Open-Meteo fields (used by the generate-ical script and API integration)
       openMeteoLat: 34.884468,
       openMeteoLng: 32.367428,
@@ -102,6 +125,16 @@ module.exports = {
       meetingNotes: "Meet at the main beach entrance near the parking area",
       blueFlagSourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/laourou-beach-blue-flag/",
       lifeguardSeason: "April-October",
+      photo: commonsPhoto(
+        "coral-bay.jpg",
+        "Flickr - ronsaunders47 - CORAL BAY. PAPHOS CYPRUS.",
+        "Nearby Coral Bay on the Peyia coast; regional reference photo, not Laourou Beach",
+        "Ronald Saunders",
+        "CC BY-SA 2.0",
+        "https://creativecommons.org/licenses/by-sa/2.0/",
+        "https://commons.wikimedia.org/wiki/File:Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg",
+        "Nearby Coral Bay, used as a regional Peyia coastline reference; this is not a photo of Laourou Beach."
+      ),
       openMeteoLat: 34.8847,
       openMeteoLng: 32.3521,
       weatherDataUrl: openMeteoWeatherUrl(34.8847, 32.3521),
@@ -116,7 +149,8 @@ module.exports = {
       longitude: 33.9712,
       description: "Blue Flag-listed sandy bay with shallow, sheltered water and an offshore islet.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/nissi-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/nissi-beach-blue-flag/",
+      photo: commonsPhoto("nissi-beach.jpg", "Nissi beach Cyprus (43006730484)", "Nissi Beach's sandy swimming bay in Ayia Napa", "dronepicr", "CC BY 2.0", "https://creativecommons.org/licenses/by/2.0/", "https://commons.wikimedia.org/wiki/File:Nissi_beach_Cyprus_(43006730484).jpg")
     }),
     createListedBeach({
       id: "makronisos-beach",
@@ -127,7 +161,8 @@ module.exports = {
       longitude: 33.955065,
       description: "Blue Flag-listed group of sandy bays with relatively calm, clear water.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/makronisos-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/makronisos-beach-blue-flag/",
+      photo: commonsPhoto("makronisos-beach.jpg", "Makronissos Beach in Ayia Napa", "Sandy Makronisos Beach in Ayia Napa", "Marek Ślusarczyk", "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/", "https://commons.wikimedia.org/wiki/File:03_Cyprus_beach_-_Makronissos_Beach_in_Ayia_Napa_-_sandy_Cyprus_beach_-_Zypern_Urlaubsgebiet.jpg")
     }),
     createListedBeach({
       id: "landa-beach",
@@ -138,7 +173,8 @@ module.exports = {
       longitude: 33.95833,
       description: "Blue Flag-listed sandy beach with organized swimming facilities.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/landa-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/landa-beach-blue-flag/",
+      photo: commonsPhoto("landa-beach.jpg", "Landa Golden Beach - Ayia Napa", "Landa Golden Beach at sunset in Ayia Napa", "ant0ni0c", "CC BY-SA 3.0", "https://creativecommons.org/licenses/by-sa/3.0/", "https://commons.wikimedia.org/wiki/File:Landa_Golden_Beach_-_Ayia_Napa_-_panoramio.jpg")
     }),
     createListedBeach({
       id: "fig-tree-bay",
@@ -149,7 +185,8 @@ module.exports = {
       longitude: 34.058549,
       description: "Blue Flag-listed sandy beach with clear water and an organized bathing area.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/protaras-beach-fig-tree-bay-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/protaras-beach-fig-tree-bay-blue-flag/",
+      photo: commonsPhoto("fig-tree-bay.jpg", "Fig Tree Beach Cyprus (41914209900)", "Fig Tree Bay's clear water and sandy beach in Protaras", "dronepicr", "CC BY 2.0", "https://creativecommons.org/licenses/by/2.0/", "https://commons.wikimedia.org/wiki/File:Fig_Tree_Beach_Cyprus_(41914209900).jpg")
     }),
     createListedBeach({
       id: "konnos-bay",
@@ -160,7 +197,8 @@ module.exports = {
       longitude: 34.06916,
       description: "Blue Flag-listed sandy cove in a sheltered setting between Protaras and Cape Greco.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/konnos-bay-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/konnos-bay-blue-flag/",
+      photo: commonsPhoto("konnos-bay.jpg", "Konnos Bay Cyprus (29852107688)", "Konnos Bay's sheltered cove and clear water", "dronepicr", "CC BY 2.0", "https://creativecommons.org/licenses/by/2.0/", "https://commons.wikimedia.org/wiki/File:Konnos_Bay_Cyprus_(29852107688).jpg")
     }),
     createListedBeach({
       id: "foinikoudes-beach",
@@ -171,7 +209,8 @@ module.exports = {
       longitude: 33.638418,
       description: "Blue Flag-listed urban beach with shallow water along Larnaca's palm-lined promenade.",
       lifeguardSeason: "June-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/foinikoudes-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/foinikoudes-beach-blue-flag/",
+      photo: commonsPhoto("foinikoudes-beach.jpg", "Finikoudes Beach, Larnaca", "Finikoudes Beach beside the Larnaca seafront", "Cypriot Chauvinist", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/", "https://commons.wikimedia.org/wiki/File:Finikoudes_Beach,_Larnaca.jpg")
     }),
     createListedBeach({
       id: "mackenzie-beach",
@@ -182,7 +221,8 @@ module.exports = {
       longitude: 33.637372,
       description: "Blue Flag-listed Larnaca beach described by Visit Cyprus as calm, clear and shallow.",
       lifeguardSeason: "June-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/mckenzie-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/mckenzie-beach-blue-flag/",
+      photo: commonsPhoto("mackenzie-beach.jpg", "Mackenzie, Larnaca, Cyprus", "Mackenzie Beach's sandy urban shoreline in Larnaca", "Andris Malygin", "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/", "https://commons.wikimedia.org/wiki/File:Mackenzie,_Larnaca,_Cyprus_-_panoramio.jpg")
     }),
     createListedBeach({
       id: "pissouri-beach",
@@ -193,7 +233,8 @@ module.exports = {
       longitude: 32.72205,
       description: "Blue Flag-listed resort beach with golden sand, pebbles and seasonal lifeguard service.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/pissouri-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/pissouri-beach-blue-flag/",
+      photo: commonsPhoto("pissouri-beach.jpg", "Pissouri Beach", "Pissouri Beach and the surrounding bay", "Valentina Powers", "CC BY 2.0", "https://creativecommons.org/licenses/by/2.0/", "https://commons.wikimedia.org/wiki/File:Pissouri_Beach.jpg")
     }),
     createListedBeach({
       id: "kourion-beach",
@@ -204,7 +245,8 @@ module.exports = {
       longitude: 32.882584,
       description: "Blue Flag-listed sand-and-pebble beach with a designated bathing area.",
       lifeguardSeason: "April-October",
-      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/kourion-beach-blue-flag/"
+      safetySourceUrl: "https://www.visitcyprus.com/discover-cyprus/sun-sea/beaches/kourion-beach-blue-flag/",
+      photo: commonsPhoto("kourion-beach.jpg", "Kourion Beach Cyprus", "Kourion Beach and its coastline in Episkopi Bay", "Radosław Botev", "CC BY 3.0 PL", "https://creativecommons.org/licenses/by/3.0/pl/deed.en", "https://commons.wikimedia.org/wiki/File:Kourion_Beach_Cyprus.jpg")
     })
   ]
 };
