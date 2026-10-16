@@ -7,8 +7,6 @@ const locations = require('../src/_data/locations.js');
 
 const OUT_DIR = path.join(__dirname, '..', 'src', 'ical');
 const LOCATION_TIME_ZONE = 'Asia/Nicosia';
-const DAY_START_HOUR = 6;
-const DAY_END_HOUR = 20;
 
 const THRESHOLDS = {
   minWaterTemp: 18,
@@ -84,7 +82,7 @@ function uidFor(locationId, start) {
 }
 
 function openMeteoMarineUrl(latitude, longitude) {
-  return `https://marine-api.open-meteo.com/v1/marine?latitude=${latitude}&longitude=${longitude}&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=UTC`;
+  return `https://marine-api.open-meteo.com/v1/marine?latitude=${latitude}&longitude=${longitude}&hourly=wave_height,wave_period,sea_surface_temperature&timezone=UTC`;
 }
 
 async function fetchJSON(url) {
@@ -109,12 +107,13 @@ function hourlyValue(hourly, index, field) {
   return Number.isFinite(value) ? value : null;
 }
 
-function localHourFor(utcDateTime) {
-  return Number(new Intl.DateTimeFormat('en-GB', {
+function formatLocalTime(utcDateTime) {
+  return new Intl.DateTimeFormat('en-GB', {
     timeZone: LOCATION_TIME_ZONE,
     hour: '2-digit',
+    minute: '2-digit',
     hourCycle: 'h23'
-  }).format(new Date(`${utcDateTime}:00Z`)));
+  }).format(new Date(`${utcDateTime}:00Z`));
 }
 
 function addOneHour(utcDateTime) {
@@ -171,6 +170,10 @@ function meetsSwimCriteria(sample) {
 
 function findSwimWindows(air, marine) {
   const marineIndices = new Map(marine.hourly.time.map((time, index) => [time, index]));
+  const daylightByDate = new Map(air.daily.time.map((date, index) => [date, {
+    sunrise: air.daily.sunrise?.[index],
+    sunset: air.daily.sunset?.[index]
+  }]));
   const windows = [];
   let currentWindow = null;
 
@@ -181,8 +184,15 @@ function findSwimWindows(air, marine) {
 
   for (let index = 0; index < air.hourly.time.length; index++) {
     const start = air.hourly.time[index];
+    const end = addOneHour(start);
     const marineIndex = marineIndices.get(start);
-    const hour = localHourFor(start);
+    const daylight = daylightByDate.get(start.slice(0, 10));
+    const startTime = new Date(`${start}:00Z`).getTime();
+    const endTime = new Date(`${end}:00Z`).getTime();
+    const sunrise = daylight?.sunrise ? new Date(`${daylight.sunrise}:00Z`).getTime() : NaN;
+    const sunset = daylight?.sunset ? new Date(`${daylight.sunset}:00Z`).getTime() : NaN;
+    const isDaylight = Number.isFinite(sunrise) && Number.isFinite(sunset)
+      && startTime >= sunrise && endTime <= sunset;
     const sample = marineIndex === undefined ? null : {
       start,
       airTemp: hourlyValue(air.hourly, index, 'temperature_2m'),
@@ -202,20 +212,23 @@ function findSwimWindows(air, marine) {
       sample.windSpeed,
       sample.precipProbability
     ].every(Number.isFinite);
-    const isDaylight = hour >= DAY_START_HOUR && hour < DAY_END_HOUR;
-
-    if (!hasRequiredData || !isDaylight || sample.uvIndex <= 0 || !meetsSwimCriteria(sample)) {
+    if (!hasRequiredData || !isDaylight || !meetsSwimCriteria(sample)) {
       finishWindow();
       continue;
     }
 
-    const end = addOneHour(start);
     if (currentWindow && currentWindow.end === start) {
       currentWindow.end = end;
       currentWindow.samples.push(sample);
     } else {
       finishWindow();
-      currentWindow = { start, end, samples: [sample] };
+      currentWindow = {
+        start,
+        end,
+        sunrise: daylight.sunrise,
+        sunset: daylight.sunset,
+        samples: [sample]
+      };
     }
   }
 
@@ -243,7 +256,7 @@ function createSwimEvent(location, window) {
     end: window.end,
     summary: `Ideal swim window (${duration} ${duration === 1 ? 'hour' : 'hours'})`,
     description: [
-      `Meets criteria for at least a 1-hour swim (${DAY_START_HOUR}:00-${DAY_END_HOUR}:00 Cyprus time).`,
+      `Daylight: ${formatLocalTime(window.sunrise)} sunrise to ${formatLocalTime(window.sunset)} sunset (Cyprus time).`,
       `Water temperature: ${formatValue(minOf('waterTemp'))}-${formatValue(maxOf('waterTemp'))}°C (minimum limit ${THRESHOLDS.minWaterTemp}°C).`,
       `UV index: up to ${formatValue(maxOf('uvIndex'))} (limit ${THRESHOLDS.maxUVIndex}).`,
       `Wave height: up to ${formatValue(maxOf('waveHeight'))} m (limit ${THRESHOLDS.maxWaveHeight} m).`,
@@ -263,7 +276,7 @@ async function generateForLocation(location) {
     fetchJSON(location.weatherDataUrl),
     fetchJSON(openMeteoMarineUrl(location.openMeteoLat, location.openMeteoLng))
   ]);
-  if (!air?.hourly?.time?.length || !marine?.hourly?.time?.length) {
+  if (!air?.hourly?.time?.length || !air?.daily?.time?.length || !marine?.hourly?.time?.length) {
     console.warn(`Skipping ${location.id} due to missing data`);
     return;
   }
