@@ -31,6 +31,27 @@ function escapeICalText(value) {
     .replace(/\r?\n/g, '\\n');
 }
 
+function foldICalLine(line) {
+  const folded = [];
+  let current = '';
+  let byteLength = 0;
+
+  for (const character of line) {
+    const characterBytes = Buffer.byteLength(character, 'utf8');
+    if (byteLength + characterBytes > 75) {
+      folded.push(current);
+      current = ` ${character}`;
+      byteLength = 1 + characterBytes;
+    } else {
+      current += character;
+      byteLength += characterBytes;
+    }
+  }
+
+  folded.push(current);
+  return folded.join('\r\n');
+}
+
 function createICS(calendarName, events) {
   const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const lines = [
@@ -52,7 +73,7 @@ function createICS(calendarName, events) {
   }
 
   lines.push('END:VCALENDAR');
-  return lines.join('\r\n');
+  return lines.map(foldICalLine).join('\r\n');
 }
 
 function uidFor(locationId, date) {
@@ -60,22 +81,77 @@ function uidFor(locationId, date) {
 }
 
 async function fetchJSON(url) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
-    return await response.json();
-  } catch (error) {
-    console.error('Fetch error:', error.message);
-    return null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+      return await response.json();
+    } catch (error) {
+      console.error(`Fetch error (${attempt}/3):`, error.message);
+      if (attempt < 3) {
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      }
+    }
   }
+
+  return null;
 }
 
-function maxHourlyValue(hourly, date, field) {
-  if (!hourly?.time || !hourly[field]) return null;
-  const values = hourly.time
-    .map((time, index) => time.startsWith(date) ? hourly[field][index] : null)
-    .filter(value => value !== null && value !== undefined);
-  return values.length ? Math.max(...values) : null;
+function hourlyValuesForDate(hourly, date, field) {
+  if (!hourly?.time || !hourly[field]) return [];
+  return hourly.time.flatMap((time, index) => {
+    const value = hourly[field][index];
+    return time.startsWith(date) && Number.isFinite(value) ? [{ value, index }] : [];
+  });
+}
+
+function maxHourlyEntry(hourly, date, field) {
+  return hourlyValuesForDate(hourly, date, field)
+    .reduce((maximum, entry) => !maximum || entry.value > maximum.value ? entry : maximum, null);
+}
+
+function averageHourlyValue(hourly, date, field) {
+  const values = hourlyValuesForDate(hourly, date, field);
+  if (!values.length) return null;
+  return values.reduce((sum, entry) => sum + entry.value, 0) / values.length;
+}
+
+function formatValue(value, decimals = 1) {
+  return value === null || value === undefined ? 'N/A' : Number(value.toFixed(decimals));
+}
+
+function describeWeatherCode(code) {
+  const descriptions = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    56: 'Light freezing drizzle',
+    57: 'Dense freezing drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    66: 'Light freezing rain',
+    67: 'Heavy freezing rain',
+    71: 'Slight snow',
+    73: 'Moderate snow',
+    75: 'Heavy snow',
+    77: 'Snow grains',
+    80: 'Slight rain showers',
+    81: 'Moderate rain showers',
+    82: 'Violent rain showers',
+    85: 'Slight snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with slight hail',
+    99: 'Thunderstorm with heavy hail'
+  };
+  return descriptions[code] || 'Unknown conditions';
 }
 
 function evaluateDay(dayIndex, air, marine) {
@@ -85,12 +161,18 @@ function evaluateDay(dayIndex, air, marine) {
   const nextDate = new Date(`${date}T00:00:00Z`);
   nextDate.setUTCDate(nextDate.getUTCDate() + 1);
 
-  const seaTemp = maxHourlyValue(marine.hourly, date, 'sea_surface_temperature');
+  const seaTemp = averageHourlyValue(marine.hourly, date, 'sea_surface_temperature');
+  const wavePeriod = averageHourlyValue(marine.hourly, date, 'wave_period');
   const waveMax = marineDaily?.wave_height_max?.[dayIndex] ?? null;
   const precip = airDaily?.precipitation_sum?.[dayIndex] ?? null;
   const uv = airDaily?.uv_index_max?.[dayIndex] ?? null;
-  const wind = maxHourlyValue(air.hourly, date, 'wind_speed_10m');
-  const precipProbability = maxHourlyValue(air.hourly, date, 'precipitation_probability');
+  const airMin = airDaily?.temperature_2m_min?.[dayIndex] ?? null;
+  const airMax = airDaily?.temperature_2m_max?.[dayIndex] ?? null;
+  const weatherCode = airDaily?.weathercode?.[dayIndex] ?? null;
+  const windEntry = maxHourlyEntry(air.hourly, date, 'wind_speed_10m');
+  const wind = windEntry?.value ?? null;
+  const windDirection = windEntry ? air.hourly.wind_direction_10m?.[windEntry.index] ?? null : null;
+  const precipProbability = maxHourlyEntry(air.hourly, date, 'precipitation_probability')?.value ?? null;
 
   const reasons = [];
   if (seaTemp !== null && seaTemp < THRESHOLDS.minWaterTemp) {
@@ -112,11 +194,24 @@ function evaluateDay(dayIndex, air, marine) {
     reasons.push(`High UV index: ${uv}`);
   }
 
+  const condition = reasons.length ? reasons.join('; ') : 'Conditions look ok';
+  const description = [
+    `Evaluation: ${condition}`,
+    `Weather: ${weatherCode === null ? 'N/A' : `${describeWeatherCode(weatherCode)} (code ${weatherCode})`}`,
+    `Air temperature: ${formatValue(airMin)}°C min / ${formatValue(airMax)}°C max`,
+    `Wind: ${wind === null ? 'N/A' : `${formatValue(wind)} m/s`}${windDirection === null ? '' : ` from ${Math.round(windDirection)}°`}`,
+    `Rain: ${formatValue(precipProbability, 0)}% max probability / ${formatValue(precip)} mm total`,
+    `UV index: ${formatValue(uv)} max`,
+    `Sea temperature: ${formatValue(seaTemp)}°C average`,
+    `Wave height: ${formatValue(waveMax)} m max`,
+    `Wave period: ${formatValue(wavePeriod)} s average`
+  ].join('\n');
+
   return {
     date,
     nextDate: nextDate.toISOString().slice(0, 10),
     summary: reasons.length ? `Caution: ${reasons.join('; ')}` : 'Recommended swim day',
-    description: `Evaluation: ${reasons.length ? reasons.join('; ') : 'Conditions look ok'}`
+    description
   };
 }
 
