@@ -33,7 +33,6 @@ module.exports = {
       openMeteoLat: 34.884468,
       openMeteoLng: 32.367428,
       weatherDataUrl: openMeteoWeatherUrl(34.884468, 32.367428),
-      marineDataUrl: "https://marine-api.open-meteo.com/v1/marine?latitude=34.884468&longitude=32.367428&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=auto",
       dataCacheExpiryMinutes: 30
     },
     {
@@ -54,7 +53,6 @@ module.exports = {
       openMeteoLat: 34.8847,
       openMeteoLng: 32.3521,
       weatherDataUrl: openMeteoWeatherUrl(34.8847, 32.3521),
-      marineDataUrl: "https://marine-api.open-meteo.com/v1/marine?latitude=34.8847&longitude=32.3521&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=auto",
       dataCacheExpiryMinutes: 30
     }
   ]

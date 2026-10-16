@@ -80,6 +80,10 @@ function uidFor(locationId, date) {
   return `${locationId}-${date}@good-weather-swimming`;
 }
 
+function openMeteoMarineUrl(latitude, longitude) {
+  return `https://marine-api.open-meteo.com/v1/marine?latitude=${latitude}&longitude=${longitude}&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=auto`;
+}
+
 async function fetchJSON(url) {
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
@@ -220,7 +224,7 @@ async function generateForLocation(location) {
 
   const [air, marine] = await Promise.all([
     fetchJSON(location.weatherDataUrl),
-    fetchJSON(location.marineDataUrl)
+    fetchJSON(openMeteoMarineUrl(location.openMeteoLat, location.openMeteoLng))
   ]);
   if (!air?.daily?.time?.length || !marine?.daily) {
     console.warn(`Skipping ${location.id} due to missing data`);
