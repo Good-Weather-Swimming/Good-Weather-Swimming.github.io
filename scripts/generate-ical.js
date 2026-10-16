@@ -10,6 +10,14 @@ ICAL.foldLength = 73;
 
 const OUT_DIR = path.join(__dirname, '..', 'src', 'ical');
 const LOCATION_TIME_ZONE = 'Asia/Nicosia';
+const WEATHER_REQUEST_INTERVAL_MS = 2_000;
+const WEATHER_REQUEST_TIMEOUT_MS = 10_000;
+const WEATHER_MAX_ATTEMPTS = 2;
+const WEATHER_RETRY_DELAY_MS = 2_000;
+const WEATHER_MAX_RETRY_AFTER_MS = 15_000;
+
+let weatherRequestQueue = Promise.resolve();
+let lastWeatherRequestStartedAt = 0;
 
 const RATING_THRESHOLDS = {
   Ideal: {
@@ -61,17 +69,48 @@ function openMeteoMarineUrl(latitude, longitude) {
   return `https://marine-api.open-meteo.com/v1/marine?latitude=${latitude}&longitude=${longitude}&hourly=wave_height,wave_period,sea_surface_temperature&timezone=UTC`;
 }
 
-async function fetchJSON(url) {
-  for (let attempt = 1; attempt <= 3; attempt++) {
+function fetchJSON(url) {
+  const request = weatherRequestQueue.then(() => fetchJSONWithRetry(url));
+  weatherRequestQueue = request.then(() => undefined, () => undefined);
+  return request;
+}
+
+function retryAfterMilliseconds(response) {
+  const retryAfter = response.headers.get('retry-after');
+  if (!retryAfter) return 0;
+
+  const seconds = Number(retryAfter);
+  const delay = Number.isFinite(seconds)
+    ? seconds * 1000
+    : Date.parse(retryAfter) - Date.now();
+  return Number.isFinite(delay) ? Math.max(0, Math.min(delay, WEATHER_MAX_RETRY_AFTER_MS)) : 0;
+}
+
+async function fetchJSONWithRetry(url) {
+  for (let attempt = 1; attempt <= WEATHER_MAX_ATTEMPTS; attempt++) {
+    const waitForSlot = WEATHER_REQUEST_INTERVAL_MS - (Date.now() - lastWeatherRequestStartedAt);
+    if (waitForSlot > 0) await new Promise(resolve => setTimeout(resolve, waitForSlot));
+    lastWeatherRequestStartedAt = Date.now();
+
     try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+      const response = await fetch(url, { signal: AbortSignal.timeout(WEATHER_REQUEST_TIMEOUT_MS) });
+      if (!response.ok) {
+        const error = new Error(`HTTP ${response.status} for ${url}`);
+        error.retryAfterMs = retryAfterMilliseconds(response);
+        error.retryable = response.status === 408 || response.status === 429 || response.status >= 500;
+        throw error;
+      }
       return await response.json();
     } catch (error) {
-      console.error(`Fetch error (${attempt}/3):`, error.message);
-      if (attempt < 3) {
-        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      if (error.retryable === false || attempt === WEATHER_MAX_ATTEMPTS) {
+        console.error(`Fetch failed (${attempt}/${WEATHER_MAX_ATTEMPTS}):`, error.message);
+        return null;
       }
+
+      const backoff = WEATHER_RETRY_DELAY_MS * (2 ** (attempt - 1));
+      const retryDelay = Math.max(backoff, error.retryAfterMs || 0);
+      console.error(`Fetch failed (${attempt}/${WEATHER_MAX_ATTEMPTS}); retrying in ${retryDelay / 1000}s:`, error.message);
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
     }
   }
 
