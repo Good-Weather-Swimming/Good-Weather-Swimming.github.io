@@ -213,9 +213,12 @@ function createSwimEvent(location, window) {
     : null;
   const maxWindSample = samples.reduce((maximum, sample) => sample.windSpeed > maximum.windSpeed ? sample : maximum);
   const duration = samples.length;
-  const weather = [...new Set(samples.map(sample => sample.weatherCode).filter(Number.isFinite))]
-    .map(code => describeWeatherCode(code))
-    .join(', ') || 'Not available';
+  const hourlyConditions = samples.map(sample => {
+    const windDirection = Number.isFinite(sample.windDirection)
+      ? ` from ${Math.round(sample.windDirection)}°`
+      : '';
+    return `${formatLocalTime(sample.start)}: ${describeWeatherCode(sample.weatherCode)}; air ${formatValue(sample.airTemp)}°C; water ${formatValue(sample.waterTemp)}°C; UV ${formatValue(sample.uvIndex)}; waves ${formatValue(sample.waveHeight)} m / ${formatValue(sample.wavePeriod)} s; wind ${formatValue(sample.windSpeed)} m/s${windDirection}; rain chance ${formatValue(sample.precipProbability, 0)}%.`;
+  });
 
   return {
     uid: uidFor(location.id, window.start),
@@ -231,7 +234,8 @@ function createSwimEvent(location, window) {
       `Wind: up to ${formatValue(maxOf('windSpeed'))} m/s${maxWindSample.windDirection === null ? '' : ` from ${Math.round(maxWindSample.windDirection)}°`} (limit ${THRESHOLDS.maxWindSpeed} m/s).`,
       `Rain probability: up to ${formatValue(maxOf('precipProbability'), 0)}% (limit ${THRESHOLDS.maxPrecipProb}%).`,
       `Air temperature: ${formatValue(minOf('airTemp'))}-${formatValue(maxOf('airTemp'))}°C.`,
-      `Conditions: ${weather}.`
+      'Conditions by hour:',
+      ...hourlyConditions
     ].join('\n')
   };
 }
