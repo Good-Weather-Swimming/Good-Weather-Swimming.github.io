@@ -131,6 +131,29 @@
         }
 
         .section-padding { padding-top: 6rem; padding-bottom: 6rem; }
+
+        @view-transition {
+            navigation: auto;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            ::view-transition-old(root) {
+                animation: page-fade-out 140ms ease-out both;
+            }
+
+            ::view-transition-new(root) {
+                animation: page-fade-in 200ms ease-out both;
+            }
+        }
+
+        @keyframes page-fade-out {
+            to { opacity: 0; }
+        }
+
+        @keyframes page-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -175,6 +198,27 @@
     </footer>
 
     <script>
+        const prefetchedPages = new Set();
+
+        function prefetchPageFromEvent(event) {
+            const anchor = event.target.closest?.('a[href]');
+            if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+
+            const url = new URL(anchor.href, window.location.href);
+            if (url.origin !== window.location.origin || url.pathname === window.location.pathname || url.pathname.endsWith('.ics')) return;
+            if (prefetchedPages.has(url.href)) return;
+
+            const prefetchLink = document.createElement('link');
+            prefetchLink.rel = 'prefetch';
+            prefetchLink.as = 'document';
+            prefetchLink.href = url.href;
+            document.head.append(prefetchLink);
+            prefetchedPages.add(url.href);
+        }
+
+        document.addEventListener('pointerover', prefetchPageFromEvent, { passive: true });
+        document.addEventListener('focusin', prefetchPageFromEvent);
+
         // Navbar glass adjustment on scroll
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
