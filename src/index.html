@@ -55,18 +55,15 @@ permalink: "{{ location.urlPath }}"
             </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
-            <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
-                <i class="fas fa-map-marked-alt text-pink-600 text-2xl mb-4"></i>
-                <h4 class="font-bold text-lg mb-2">Easy Location</h4>
-                <p class="text-slate-600">Accessible beach with good parking and nearby facilities.</p>
-            </div>
-            <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
-                <i class="fas fa-users text-blue-600 text-2xl mb-4"></i>
-                <h4 class="font-bold text-lg mb-2">Community Swims</h4>
-                <p class="text-slate-600">Regular group swims based on weather conditions.</p>
-            </div>
-        </div>
+        {% if location.blueFlagSourceUrl %}
+        <aside class="mt-10 max-w-3xl mx-auto rounded-xl border border-sky-soft bg-white p-5 text-left shadow-sm">
+            <h3 class="font-bold text-primary mb-2"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Swimming safety</h3>
+            <p class="text-sm text-slate-700">
+                The <a class="underline font-semibold" href="{{ location.blueFlagSourceUrl }}" target="_blank" rel="noopener noreferrer">Visit Cyprus Blue Flag profile</a> lists seasonal lifeguard service: {{ location.lifeguardSeason }}.
+                This is not live safety information. Check current lifeguard hours, posted beach flags and local advice before entering the water.
+            </p>
+        </aside>
+        {% endif %}
     </div>
 </section>
 
@@ -97,6 +94,7 @@ permalink: "{{ location.urlPath }}"
     </div>
 </section>
 
+{% if location.whatsappGroup %}
 <!-- Join This Location's Group -->
 <section id="join" class="py-20 bg-primary text-white text-center">
     <div class="max-w-3xl mx-auto px-4">
@@ -118,3 +116,4 @@ permalink: "{{ location.urlPath }}"
         </div>
     </div>
 </section>
+{% endif %}

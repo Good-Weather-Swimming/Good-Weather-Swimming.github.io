@@ -23,13 +23,13 @@ location: "{{ area }}"
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
                 <i class="fas fa-wave-square text-blue-600 text-2xl mb-4"></i>
-                <h4 class="font-bold text-lg mb-2">Perfect Conditions</h4>
-                <p class="text-slate-600">Almost Year-round swimming with Mediterranean warmth and generally calm waters.</p>
+                <h4 class="font-bold text-lg mb-2">Check conditions</h4>
+                <p class="text-slate-600">Forecast windows are guidance only. Follow current beach flags and local safety advice.</p>
             </div>
             <div class="p-8 rounded-2xl border-l-8 bg-white shadow-md border-sky-400 text-left">
                 <i class="fas fa-compass text-pink-600 text-2xl mb-4"></i>
-                <h4 class="font-bold text-lg mb-2">Multiple Beaches</h4>
-                <p class="text-slate-600">Variety of swimming spots, each with unique characteristics and conditions.</p>
+                <h4 class="font-bold text-lg mb-2">Seasonal lifeguards</h4>
+                <p class="text-slate-600">Visit Cyprus profiles list seasonal lifeguard service at the beaches included here. Check current hours before swimming.</p>
             </div>
         </div>
     </div>
@@ -39,13 +39,16 @@ location: "{{ area }}"
 <section class="section-padding bg-white">
     <div class="max-w-5xl mx-auto px-4">
         <h2 class="text-4xl font-bold mb-6 italic text-primary text-center">Beaches in {{ area.name }}</h2>
+        <p class="max-w-3xl mx-auto mb-8 text-center text-sm text-slate-600">
+            Listed beaches have official Blue Flag profiles that describe seasonal lifeguard coverage. Those profiles are not live safety reports; follow current beach flags and local advice.
+        </p>
         <div class="w-20 h-1 mb-12 mx-auto bg-sky-500"></div>
         
         {%- set areaLocations = locations.locations | selectattr('areaId', 'equalto', area.id) | list %}
 
-        <div class="grid grid-cols-1 md:grid-cols-{{ areaLocations.length }} gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {%- for loc in areaLocations %}
-            <div class="py-6">
+            <article class="rounded-xl border border-sand-border bg-sand p-6">
                 <h3 class="text-2xl font-bold text-primary mb-2">
                     {{ loc.name }}
                 </h3>
@@ -54,18 +57,23 @@ location: "{{ area }}"
                     {{ loc.description }}
                 </p>
 
+                <p class="text-sm text-slate-600 mb-4">
+                    Lifeguards listed: {{ loc.lifeguardSeason }}
+                </p>
+
                 <a
                     href="{{ loc.urlPath }}"
                     class="inline-block btn-pink px-6 py-3 rounded-lg font-bold"
                 >
                     View Details & Schedule
                 </a>
-            </div>
+            </article>
             {%- endfor %}
         </div>
     </div>
 </section>
 
+{% if area.whatsappGroup %}
 <!-- Area WhatsApp Section -->
 <section class="py-20 bg-primary text-white text-center">
     <div class="max-w-3xl mx-auto px-4">
@@ -81,3 +89,4 @@ location: "{{ area }}"
         </div>
     </div>
 </section>
+{% endif %}
