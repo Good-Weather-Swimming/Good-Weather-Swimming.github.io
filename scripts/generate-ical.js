@@ -6,21 +6,24 @@ const path = require('path');
 const locations = require('../src/_data/locations.js');
 
 const OUT_DIR = path.join(__dirname, '..', 'src', 'ical');
+const LOCATION_TIME_ZONE = 'Asia/Nicosia';
+const DAY_START_HOUR = 6;
+const DAY_END_HOUR = 20;
 
 const THRESHOLDS = {
   minWaterTemp: 18,
-  maxWaveHeight: 1.5,
+  maxWaveHeight: 0.5,
   maxWindSpeed: 8,
   maxPrecipProb: 30,
-  maxUVIndex: 8
+  maxUVIndex: 3
 };
 
 async function ensureOutDir() {
   await fs.mkdir(OUT_DIR, { recursive: true });
 }
 
-function formatICalDate(date) {
-  return date.replace(/-/g, '');
+function formatICalDateTime(dateTime) {
+  return `${dateTime.replace(/[-:]/g, '')}00Z`;
 }
 
 function escapeICalText(value) {
@@ -65,8 +68,8 @@ function createICS(calendarName, events) {
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${event.uid}`);
     lines.push(`DTSTAMP:${now}`);
-    lines.push(`DTSTART;VALUE=DATE:${formatICalDate(event.date)}`);
-    lines.push(`DTEND;VALUE=DATE:${formatICalDate(event.nextDate)}`);
+    lines.push(`DTSTART:${formatICalDateTime(event.start)}`);
+    lines.push(`DTEND:${formatICalDateTime(event.end)}`);
     lines.push(`SUMMARY:${escapeICalText(event.summary)}`);
     if (event.description) lines.push(`DESCRIPTION:${escapeICalText(event.description)}`);
     lines.push('END:VEVENT');
@@ -76,12 +79,12 @@ function createICS(calendarName, events) {
   return lines.map(foldICalLine).join('\r\n');
 }
 
-function uidFor(locationId, date) {
-  return `${locationId}-${date}@good-weather-swimming`;
+function uidFor(locationId, start) {
+  return `${locationId}-${start.replace(/[-:]/g, '')}@good-weather-swimming`;
 }
 
 function openMeteoMarineUrl(latitude, longitude) {
-  return `https://marine-api.open-meteo.com/v1/marine?latitude=${latitude}&longitude=${longitude}&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=auto`;
+  return `https://marine-api.open-meteo.com/v1/marine?latitude=${latitude}&longitude=${longitude}&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=UTC`;
 }
 
 async function fetchJSON(url) {
@@ -101,27 +104,27 @@ async function fetchJSON(url) {
   return null;
 }
 
-function hourlyValuesForDate(hourly, date, field) {
-  if (!hourly?.time || !hourly[field]) return [];
-  return hourly.time.flatMap((time, index) => {
-    const value = hourly[field][index];
-    return time.startsWith(date) && Number.isFinite(value) ? [{ value, index }] : [];
-  });
+function hourlyValue(hourly, index, field) {
+  const value = hourly?.[field]?.[index];
+  return Number.isFinite(value) ? value : null;
 }
 
-function maxHourlyEntry(hourly, date, field) {
-  return hourlyValuesForDate(hourly, date, field)
-    .reduce((maximum, entry) => !maximum || entry.value > maximum.value ? entry : maximum, null);
+function localHourFor(utcDateTime) {
+  return Number(new Intl.DateTimeFormat('en-GB', {
+    timeZone: LOCATION_TIME_ZONE,
+    hour: '2-digit',
+    hourCycle: 'h23'
+  }).format(new Date(`${utcDateTime}:00Z`)));
 }
 
-function averageHourlyValue(hourly, date, field) {
-  const values = hourlyValuesForDate(hourly, date, field);
-  if (!values.length) return null;
-  return values.reduce((sum, entry) => sum + entry.value, 0) / values.length;
+function addOneHour(utcDateTime) {
+  return new Date(new Date(`${utcDateTime}:00Z`).getTime() + 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 16);
 }
 
 function formatValue(value, decimals = 1) {
-  return value === null || value === undefined ? 'N/A' : Number(value.toFixed(decimals));
+  return Number.isFinite(value) ? Number(value.toFixed(decimals)) : 'N/A';
 }
 
 function describeWeatherCode(code) {
@@ -158,64 +161,98 @@ function describeWeatherCode(code) {
   return descriptions[code] || 'Unknown conditions';
 }
 
-function evaluateDay(dayIndex, air, marine) {
-  const airDaily = air.daily;
-  const marineDaily = marine.daily;
-  const date = airDaily.time[dayIndex];
-  const nextDate = new Date(`${date}T00:00:00Z`);
-  nextDate.setUTCDate(nextDate.getUTCDate() + 1);
+function meetsSwimCriteria(sample) {
+  return sample.waterTemp >= THRESHOLDS.minWaterTemp
+    && sample.uvIndex <= THRESHOLDS.maxUVIndex
+    && sample.waveHeight <= THRESHOLDS.maxWaveHeight
+    && sample.windSpeed <= THRESHOLDS.maxWindSpeed
+    && sample.precipProbability <= THRESHOLDS.maxPrecipProb;
+}
 
-  const seaTemp = averageHourlyValue(marine.hourly, date, 'sea_surface_temperature');
-  const wavePeriod = averageHourlyValue(marine.hourly, date, 'wave_period');
-  const waveMax = marineDaily?.wave_height_max?.[dayIndex] ?? null;
-  const precip = airDaily?.precipitation_sum?.[dayIndex] ?? null;
-  const uv = airDaily?.uv_index_max?.[dayIndex] ?? null;
-  const airMin = airDaily?.temperature_2m_min?.[dayIndex] ?? null;
-  const airMax = airDaily?.temperature_2m_max?.[dayIndex] ?? null;
-  const weatherCode = airDaily?.weathercode?.[dayIndex] ?? null;
-  const windEntry = maxHourlyEntry(air.hourly, date, 'wind_speed_10m');
-  const wind = windEntry?.value ?? null;
-  const windDirection = windEntry ? air.hourly.wind_direction_10m?.[windEntry.index] ?? null : null;
-  const precipProbability = maxHourlyEntry(air.hourly, date, 'precipitation_probability')?.value ?? null;
+function findSwimWindows(air, marine) {
+  const marineIndices = new Map(marine.hourly.time.map((time, index) => [time, index]));
+  const windows = [];
+  let currentWindow = null;
 
-  const reasons = [];
-  if (seaTemp !== null && seaTemp < THRESHOLDS.minWaterTemp) {
-    reasons.push(`Cold water: ${seaTemp}°C`);
-  }
-  if (waveMax !== null && waveMax > THRESHOLDS.maxWaveHeight) {
-    reasons.push(`High waves: ${waveMax} m`);
-  }
-  if (wind !== null && wind > THRESHOLDS.maxWindSpeed) {
-    reasons.push(`High wind: ${wind} m/s`);
-  }
-  if (precip !== null && precip > 2) {
-    reasons.push(`Precipitation: ${precip} mm`);
-  }
-  if (precipProbability !== null && precipProbability > THRESHOLDS.maxPrecipProb) {
-    reasons.push(`Rain probability: ${precipProbability}%`);
-  }
-  if (uv !== null && uv > THRESHOLDS.maxUVIndex) {
-    reasons.push(`High UV index: ${uv}`);
+  function finishWindow() {
+    if (currentWindow) windows.push(currentWindow);
+    currentWindow = null;
   }
 
-  const condition = reasons.length ? reasons.join('; ') : 'Conditions look ok';
-  const description = [
-    `Evaluation: ${condition}`,
-    `Weather: ${weatherCode === null ? 'N/A' : `${describeWeatherCode(weatherCode)} (code ${weatherCode})`}`,
-    `Air temperature: ${formatValue(airMin)}°C min / ${formatValue(airMax)}°C max`,
-    `Wind: ${wind === null ? 'N/A' : `${formatValue(wind)} m/s`}${windDirection === null ? '' : ` from ${Math.round(windDirection)}°`}`,
-    `Rain: ${formatValue(precipProbability, 0)}% max probability / ${formatValue(precip)} mm total`,
-    `UV index: ${formatValue(uv)} max`,
-    `Sea temperature: ${formatValue(seaTemp)}°C average`,
-    `Wave height: ${formatValue(waveMax)} m max`,
-    `Wave period: ${formatValue(wavePeriod)} s average`
-  ].join('\n');
+  for (let index = 0; index < air.hourly.time.length; index++) {
+    const start = air.hourly.time[index];
+    const marineIndex = marineIndices.get(start);
+    const hour = localHourFor(start);
+    const sample = marineIndex === undefined ? null : {
+      start,
+      airTemp: hourlyValue(air.hourly, index, 'temperature_2m'),
+      windSpeed: hourlyValue(air.hourly, index, 'wind_speed_10m'),
+      windDirection: hourlyValue(air.hourly, index, 'wind_direction_10m'),
+      precipProbability: hourlyValue(air.hourly, index, 'precipitation_probability'),
+      weatherCode: hourlyValue(air.hourly, index, 'weathercode'),
+      uvIndex: hourlyValue(air.hourly, index, 'uv_index'),
+      waterTemp: hourlyValue(marine.hourly, marineIndex, 'sea_surface_temperature'),
+      waveHeight: hourlyValue(marine.hourly, marineIndex, 'wave_height'),
+      wavePeriod: hourlyValue(marine.hourly, marineIndex, 'wave_period')
+    };
+    const hasRequiredData = sample && [
+      sample.waterTemp,
+      sample.uvIndex,
+      sample.waveHeight,
+      sample.windSpeed,
+      sample.precipProbability
+    ].every(Number.isFinite);
+    const isDaylight = hour >= DAY_START_HOUR && hour < DAY_END_HOUR;
+
+    if (!hasRequiredData || !isDaylight || sample.uvIndex <= 0 || !meetsSwimCriteria(sample)) {
+      finishWindow();
+      continue;
+    }
+
+    const end = addOneHour(start);
+    if (currentWindow && currentWindow.end === start) {
+      currentWindow.end = end;
+      currentWindow.samples.push(sample);
+    } else {
+      finishWindow();
+      currentWindow = { start, end, samples: [sample] };
+    }
+  }
+
+  finishWindow();
+  return windows;
+}
+
+function createSwimEvent(location, window) {
+  const samples = window.samples;
+  const valuesOf = field => samples.map(sample => sample[field]).filter(Number.isFinite);
+  const minOf = field => valuesOf(field).length ? Math.min(...valuesOf(field)) : null;
+  const maxOf = field => valuesOf(field).length ? Math.max(...valuesOf(field)) : null;
+  const averageOf = field => valuesOf(field).length
+    ? valuesOf(field).reduce((sum, value) => sum + value, 0) / valuesOf(field).length
+    : null;
+  const maxWindSample = samples.reduce((maximum, sample) => sample.windSpeed > maximum.windSpeed ? sample : maximum);
+  const duration = samples.length;
+  const weather = [...new Set(samples.map(sample => sample.weatherCode).filter(Number.isFinite))]
+    .map(code => describeWeatherCode(code))
+    .join(', ') || 'Not available';
 
   return {
-    date,
-    nextDate: nextDate.toISOString().slice(0, 10),
-    summary: reasons.length ? `Caution: ${reasons.join('; ')}` : 'Recommended swim day',
-    description
+    uid: uidFor(location.id, window.start),
+    start: window.start,
+    end: window.end,
+    summary: `Ideal swim window (${duration} ${duration === 1 ? 'hour' : 'hours'})`,
+    description: [
+      `Meets criteria for at least a 1-hour swim (${DAY_START_HOUR}:00-${DAY_END_HOUR}:00 Cyprus time).`,
+      `Water temperature: ${formatValue(minOf('waterTemp'))}-${formatValue(maxOf('waterTemp'))}°C (minimum limit ${THRESHOLDS.minWaterTemp}°C).`,
+      `UV index: up to ${formatValue(maxOf('uvIndex'))} (limit ${THRESHOLDS.maxUVIndex}).`,
+      `Wave height: up to ${formatValue(maxOf('waveHeight'))} m (limit ${THRESHOLDS.maxWaveHeight} m).`,
+      `Wave period: ${formatValue(averageOf('wavePeriod'))} s average.`,
+      `Wind: up to ${formatValue(maxOf('windSpeed'))} m/s${maxWindSample.windDirection === null ? '' : ` from ${Math.round(maxWindSample.windDirection)}°`} (limit ${THRESHOLDS.maxWindSpeed} m/s).`,
+      `Rain probability: up to ${formatValue(maxOf('precipProbability'), 0)}% (limit ${THRESHOLDS.maxPrecipProb}%).`,
+      `Air temperature: ${formatValue(minOf('airTemp'))}-${formatValue(maxOf('airTemp'))}°C.`,
+      `Conditions: ${weather}.`
+    ].join('\n')
   };
 }
 
@@ -226,17 +263,13 @@ async function generateForLocation(location) {
     fetchJSON(location.weatherDataUrl),
     fetchJSON(openMeteoMarineUrl(location.openMeteoLat, location.openMeteoLng))
   ]);
-  if (!air?.daily?.time?.length || !marine?.daily) {
+  if (!air?.hourly?.time?.length || !marine?.hourly?.time?.length) {
     console.warn(`Skipping ${location.id} due to missing data`);
     return;
   }
 
-  const events = [];
-  const dayCount = Math.min(air.daily.time.length, 7);
-  for (let index = 0; index < dayCount; index++) {
-    const event = evaluateDay(index, air, marine);
-    events.push({ uid: uidFor(location.id, event.date), ...event });
-  }
+  const events = findSwimWindows(air, marine)
+    .map(window => createSwimEvent(location, window));
 
   const ics = createICS(`${location.name} - Swim calendar`, events);
   const outFile = path.join(OUT_DIR, `${location.id}.ics`);

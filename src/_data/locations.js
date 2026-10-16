@@ -1,5 +1,5 @@
 function openMeteoWeatherUrl(latitude, longitude) {
-  return `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,weathercode,uv_index&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,uv_index_max&timezone=auto`;
+  return `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,weathercode,uv_index&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,uv_index_max&timezone=UTC`;
 }
 
 module.exports = {
