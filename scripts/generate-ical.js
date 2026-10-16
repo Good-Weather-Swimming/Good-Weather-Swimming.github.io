@@ -11,12 +11,21 @@ ICAL.foldLength = 73;
 const OUT_DIR = path.join(__dirname, '..', 'src', 'ical');
 const LOCATION_TIME_ZONE = 'Asia/Nicosia';
 
-const THRESHOLDS = {
-  minWaterTemp: 18,
-  maxWaveHeight: 0.5,
-  maxWindSpeed: 8,
-  maxPrecipProb: 30,
-  maxUVIndex: 3
+const RATING_THRESHOLDS = {
+  Ideal: {
+    minWaterTemp: 18,
+    maxWaveHeight: 0.5,
+    maxWindSpeed: 8,
+    maxPrecipProb: 30,
+    maxUVIndex: 3
+  },
+  OK: {
+    minWaterTemp: 18,
+    maxWaveHeight: 1,
+    maxWindSpeed: 10,
+    maxPrecipProb: 50,
+    maxUVIndex: 5
+  }
 };
 
 async function ensureOutDir() {
@@ -127,12 +136,18 @@ function describeWeatherCode(code) {
   return descriptions[code] || 'Unknown conditions';
 }
 
-function meetsSwimCriteria(sample) {
-  return sample.waterTemp >= THRESHOLDS.minWaterTemp
-    && sample.uvIndex <= THRESHOLDS.maxUVIndex
-    && sample.waveHeight <= THRESHOLDS.maxWaveHeight
-    && sample.windSpeed <= THRESHOLDS.maxWindSpeed
-    && sample.precipProbability <= THRESHOLDS.maxPrecipProb;
+function meetsRatingThresholds(sample, thresholds) {
+  return sample.waterTemp >= thresholds.minWaterTemp
+    && sample.uvIndex <= thresholds.maxUVIndex
+    && sample.waveHeight <= thresholds.maxWaveHeight
+    && sample.windSpeed <= thresholds.maxWindSpeed
+    && sample.precipProbability <= thresholds.maxPrecipProb;
+}
+
+function rateConditions(sample) {
+  if (meetsRatingThresholds(sample, RATING_THRESHOLDS.Ideal)) return 'Ideal';
+  if (meetsRatingThresholds(sample, RATING_THRESHOLDS.OK)) return 'OK';
+  return 'Poor';
 }
 
 function findSwimWindows(air, marine) {
@@ -179,17 +194,19 @@ function findSwimWindows(air, marine) {
       sample.windSpeed,
       sample.precipProbability
     ].every(Number.isFinite);
-    if (!hasRequiredData || !isDaylight || !meetsSwimCriteria(sample)) {
+    if (!hasRequiredData || !isDaylight) {
       finishWindow();
       continue;
     }
 
-    if (currentWindow && currentWindow.end === start) {
+    const rating = rateConditions(sample);
+    if (currentWindow && currentWindow.end === start && currentWindow.rating === rating) {
       currentWindow.end = end;
       currentWindow.samples.push(sample);
     } else {
       finishWindow();
       currentWindow = {
+        rating,
         start,
         end,
         sunrise: daylight.sunrise,
@@ -224,15 +241,20 @@ function createSwimEvent(location, window) {
     uid: uidFor(location.id, window.start),
     start: window.start,
     end: window.end,
-    summary: `Ideal swim window (${duration} ${duration === 1 ? 'hour' : 'hours'})`,
+    summary: window.rating === 'Poor'
+      ? `Poor conditions (${duration} ${duration === 1 ? 'hour' : 'hours'}; not recommended)`
+      : `${window.rating} swim window (${duration} ${duration === 1 ? 'hour' : 'hours'})`,
     description: [
+      `Rating: ${window.rating}${window.rating === 'Poor' ? ' - not recommended for swimming' : ''}.`,
       `Daylight: ${formatLocalTime(window.sunrise)} sunrise to ${formatLocalTime(window.sunset)} sunset (Cyprus time).`,
-      `Water temperature: ${formatValue(minOf('waterTemp'))}-${formatValue(maxOf('waterTemp'))}°C (minimum limit ${THRESHOLDS.minWaterTemp}°C).`,
-      `UV index: up to ${formatValue(maxOf('uvIndex'))} (limit ${THRESHOLDS.maxUVIndex}).`,
-      `Wave height: up to ${formatValue(maxOf('waveHeight'))} m (limit ${THRESHOLDS.maxWaveHeight} m).`,
+      `Ideal limits: water at least ${RATING_THRESHOLDS.Ideal.minWaterTemp}°C, UV up to ${RATING_THRESHOLDS.Ideal.maxUVIndex}, waves up to ${RATING_THRESHOLDS.Ideal.maxWaveHeight} m, wind up to ${RATING_THRESHOLDS.Ideal.maxWindSpeed} m/s, rain chance up to ${RATING_THRESHOLDS.Ideal.maxPrecipProb}%.`,
+      `OK limits: water at least ${RATING_THRESHOLDS.OK.minWaterTemp}°C, UV up to ${RATING_THRESHOLDS.OK.maxUVIndex}, waves up to ${RATING_THRESHOLDS.OK.maxWaveHeight} m, wind up to ${RATING_THRESHOLDS.OK.maxWindSpeed} m/s, rain chance up to ${RATING_THRESHOLDS.OK.maxPrecipProb}%.`,
+      `Water temperature: ${formatValue(minOf('waterTemp'))}-${formatValue(maxOf('waterTemp'))}°C.`,
+      `UV index: up to ${formatValue(maxOf('uvIndex'))}.`,
+      `Wave height: up to ${formatValue(maxOf('waveHeight'))} m.`,
       `Wave period: ${formatValue(averageOf('wavePeriod'))} s average.`,
-      `Wind: up to ${formatValue(maxOf('windSpeed'))} m/s${maxWindSample.windDirection === null ? '' : ` from ${Math.round(maxWindSample.windDirection)}°`} (limit ${THRESHOLDS.maxWindSpeed} m/s).`,
-      `Rain probability: up to ${formatValue(maxOf('precipProbability'), 0)}% (limit ${THRESHOLDS.maxPrecipProb}%).`,
+      `Wind: up to ${formatValue(maxOf('windSpeed'))} m/s${maxWindSample.windDirection === null ? '' : ` from ${Math.round(maxWindSample.windDirection)}°`}.`,
+      `Rain probability: up to ${formatValue(maxOf('precipProbability'), 0)}%.`,
       `Air temperature: ${formatValue(minOf('airTemp'))}-${formatValue(maxOf('airTemp'))}°C.`,
       'Conditions by hour:',
       ...hourlyConditions
