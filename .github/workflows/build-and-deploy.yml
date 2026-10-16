@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+    - cron: "0 14 * * *"
 
 permissions:
   contents: read
@@ -32,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Generate iCal files
+        run: node scripts/generate-ical.js
+
       - name: Build site
         run: npm run build
 
@@ -41,7 +47,7 @@ jobs:
           path: '_site'
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     needs: build
     environment:
       name: github-pages

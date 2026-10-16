@@ -1,6 +1,7 @@
 module.exports = function(eleventyConfig) {
   // Copy static files
   eleventyConfig.addPassthroughCopy("src/assets");
+  eleventyConfig.addPassthroughCopy("src/ical");
   eleventyConfig.addPassthroughCopy("CNAME");
 
   // Watch CSS files (for Tailwind in dev mode)

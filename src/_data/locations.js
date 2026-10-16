@@ -1,3 +1,7 @@
+function openMeteoWeatherUrl(latitude, longitude) {
+  return `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,weathercode,uv_index&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,uv_index_max&timezone=auto`;
+}
+
 module.exports = {
   areas: [
     {
@@ -25,7 +29,12 @@ module.exports = {
       description: "Beautiful golden sandy beach in western Peyia",
       whatsappGroup: "https://chat.whatsapp.com/LW7HuuSKNrQ5xIRWjk8uau", // Location-level group
       meetingNotes: "Decided on the spot - choose between Left or Right side based on conditions",
-      weatherDataUrl: "https://rezerv.it/weather/v1/forecast?latitude=34.884468&longitude=32.367428&preset=openwater_swimming"
+      // Open-Meteo fields (used by the generate-ical script and API integration)
+      openMeteoLat: 34.884468,
+      openMeteoLng: 32.367428,
+      weatherDataUrl: openMeteoWeatherUrl(34.884468, 32.367428),
+      marineDataUrl: "https://marine-api.open-meteo.com/v1/marine?latitude=34.884468&longitude=32.367428&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=auto",
+      dataCacheExpiryMinutes: 30
     },
     {
       id: "laourou-beach",
@@ -42,7 +51,11 @@ module.exports = {
       description: "Scenic beach with rocky areas and calm waters",
       whatsappGroup: "https://chat.whatsapp.com/GJgJGYaQTmFGIOaQRdjv8I",
       meetingNotes: "Meet at the main beach entrance near the parking area",
-      weatherDataUrl: "https://rezerv.it/weather/v1/forecast?latitude=34.8847&longitude=32.3521&preset=openwater_swimming"
+      openMeteoLat: 34.8847,
+      openMeteoLng: 32.3521,
+      weatherDataUrl: openMeteoWeatherUrl(34.8847, 32.3521),
+      marineDataUrl: "https://marine-api.open-meteo.com/v1/marine?latitude=34.8847&longitude=32.3521&hourly=wave_height,wave_period,sea_surface_temperature&daily=wave_height_max&timezone=auto",
+      dataCacheExpiryMinutes: 30
     }
   ]
 };

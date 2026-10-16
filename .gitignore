@@ -1,5 +1,6 @@
 node_modules/
 _site/
+src/ical/*.ics
 .DS_Store
 .env
 *.log
