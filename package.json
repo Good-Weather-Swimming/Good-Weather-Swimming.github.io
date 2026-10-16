@@ -20,5 +20,8 @@
   "license": "MIT",
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0"
+  },
+  "dependencies": {
+    "ical.js": "^2.2.1"
   }
 }

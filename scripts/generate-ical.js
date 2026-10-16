@@ -3,7 +3,10 @@
 
 const fs = require('fs/promises');
 const path = require('path');
+const ICAL = require('ical.js');
 const locations = require('../src/_data/locations.js');
+
+ICAL.foldLength = 73;
 
 const OUT_DIR = path.join(__dirname, '..', 'src', 'ical');
 const LOCATION_TIME_ZONE = 'Asia/Nicosia';
@@ -20,61 +23,25 @@ async function ensureOutDir() {
   await fs.mkdir(OUT_DIR, { recursive: true });
 }
 
-function formatICalDateTime(dateTime) {
-  return `${dateTime.replace(/[-:]/g, '')}00Z`;
-}
-
-function escapeICalText(value) {
-  return String(value)
-    .replace(/\\/g, '\\\\')
-    .replace(/;/g, '\\;')
-    .replace(/,/g, '\\,')
-    .replace(/\r?\n/g, '\\n');
-}
-
-function foldICalLine(line) {
-  const folded = [];
-  let current = '';
-  let byteLength = 0;
-
-  for (const character of line) {
-    const characterBytes = Buffer.byteLength(character, 'utf8');
-    if (byteLength + characterBytes > 75) {
-      folded.push(current);
-      current = ` ${character}`;
-      byteLength = 1 + characterBytes;
-    } else {
-      current += character;
-      byteLength += characterBytes;
-    }
-  }
-
-  folded.push(current);
-  return folded.join('\r\n');
-}
-
 function createICS(calendarName, events) {
-  const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Good-Weather-Swimming//Open-Meteo iCal Generator//EN',
-    `X-WR-CALNAME:${escapeICalText(calendarName)}`
-  ];
+  const calendar = new ICAL.Component('vcalendar');
+  calendar.addPropertyWithValue('version', '2.0');
+  calendar.addPropertyWithValue('prodid', '-//Good-Weather-Swimming//Open-Meteo iCal Generator//EN');
+  calendar.addPropertyWithValue('x-wr-calname', calendarName);
 
   for (const event of events) {
-    lines.push('BEGIN:VEVENT');
-    lines.push(`UID:${event.uid}`);
-    lines.push(`DTSTAMP:${now}`);
-    lines.push(`DTSTART:${formatICalDateTime(event.start)}`);
-    lines.push(`DTEND:${formatICalDateTime(event.end)}`);
-    lines.push(`SUMMARY:${escapeICalText(event.summary)}`);
-    if (event.description) lines.push(`DESCRIPTION:${escapeICalText(event.description)}`);
-    lines.push('END:VEVENT');
+    const component = new ICAL.Component('vevent');
+    const calendarEvent = new ICAL.Event(component);
+    calendarEvent.uid = event.uid;
+    calendarEvent.startDate = ICAL.Time.fromJSDate(new Date(`${event.start}:00Z`), true);
+    calendarEvent.endDate = ICAL.Time.fromJSDate(new Date(`${event.end}:00Z`), true);
+    calendarEvent.summary = event.summary;
+    calendarEvent.description = event.description;
+    component.addPropertyWithValue('dtstamp', ICAL.Time.fromJSDate(new Date(), true));
+    calendar.addSubcomponent(component);
   }
 
-  lines.push('END:VCALENDAR');
-  return lines.map(foldICalLine).join('\r\n');
+  return calendar.toString();
 }
 
 function uidFor(locationId, start) {
