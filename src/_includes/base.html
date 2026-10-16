@@ -284,6 +284,38 @@
         document.addEventListener('pointerover', prefetchPageFromEvent, { passive: true });
         document.addEventListener('focusin', prefetchPageFromEvent);
 
+        document.addEventListener('click', async event => {
+            const button = event.target.closest?.('[data-copy-calendar-link]');
+            if (!button) return;
+
+            const feedback = button.parentElement.querySelector('[data-copy-feedback]');
+            const url = button.dataset.copyCalendarLink;
+            let copied = false;
+
+            try {
+                if (navigator.clipboard?.writeText) {
+                    await navigator.clipboard.writeText(url);
+                    copied = true;
+                }
+            } catch {}
+
+            if (!copied) {
+                try {
+                    const field = document.createElement('textarea');
+                    field.value = url;
+                    field.setAttribute('readonly', '');
+                    field.style.position = 'fixed';
+                    field.style.opacity = '0';
+                    document.body.append(field);
+                    field.select();
+                    copied = document.execCommand('copy');
+                    field.remove();
+                } catch {}
+            }
+
+            feedback.textContent = copied ? 'Subscription link copied.' : 'Could not copy link. Please try again.';
+        });
+
         // Navbar glass adjustment on scroll
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
