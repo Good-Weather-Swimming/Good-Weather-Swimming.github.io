@@ -82,12 +82,65 @@
             transition: background-color 0.3s ease;
         }
 
-        /* Responsive Header Logic */
-        @media (min-width: 768px) {
-            .glass-sticky {
-                position: sticky;
-                top: 0;
-            }
+        .glass-sticky {
+            position: sticky;
+            top: 0;
+        }
+
+        .primary-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .primary-navigation a {
+            flex: 0 0 auto;
+            border-radius: 0.5rem;
+            color: var(--primary-blue);
+            font-size: 0.875rem;
+            font-weight: 700;
+            min-height: 2.5rem;
+            padding: 0.625rem 0.875rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .primary-navigation a:hover,
+        .primary-navigation a:focus-visible {
+            background-color: rgba(0, 77, 122, 0.1);
+        }
+
+        .primary-navigation a:focus-visible,
+        .scroll-to-top:focus-visible {
+            outline: 3px solid var(--energy-pink);
+            outline-offset: 2px;
+        }
+
+        .scroll-to-top {
+            align-items: center;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            bottom: 1rem;
+            box-shadow: 0 4px 14px rgba(0, 45, 77, 0.3);
+            color: white;
+            display: flex;
+            height: 3rem;
+            justify-content: center;
+            position: fixed;
+            right: 1rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            width: 3rem;
+            z-index: 60;
+        }
+
+        .scroll-to-top:hover {
+            background: var(--ocean-blue);
+            transform: translateY(-2px);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
         }
 
         .hero-gradient {
@@ -159,22 +212,30 @@
 <body>
 
     <!-- Navigation -->
-    <nav class="glass glass-sticky shadow-sm">
+    <nav id="page-top" class="glass glass-sticky shadow-sm" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center flex-wrap">
+            <div class="flex justify-between min-h-16 items-center gap-3 py-2">
                 <a href="/" class="flex items-center hover:opacity-80 transition">
-                    <span class="text-2xl font-bold italic font-display">
+                    <span class="text-xl sm:text-2xl font-bold italic font-display whitespace-nowrap">
                         <span class="text-primary">GWS</span>
                         <span class="text-pink"> {{ location.name }}</span>
                     </span>
                 </a>
 
-                
-                <div class="flex items-center gap-4">
-                    <a href="{{ location.whatsappGroup }}" target="_blank" class="btn-pink px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2">
-                        <i class="fab fa-whatsapp"></i> Join Group
+                <div class="flex items-center">
+                    <a href="{{ location.whatsappGroup }}" target="_blank" rel="noopener noreferrer" aria-label="Join WhatsApp group" title="Join WhatsApp group" class="btn-pink px-3 sm:px-5 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i><span class="hidden sm:inline">Join Group</span>
                     </a>
                 </div>
+            </div>
+            <div class="primary-navigation" aria-label="Pages">
+                <a href="/">Home</a>
+                {% for area in locations.areas %}
+                <a href="{{ area.urlPath }}">{{ area.name }}</a>
+                {% endfor %}
+                {% for navLocation in locations.locations %}
+                <a href="{{ navLocation.urlPath }}">{{ navLocation.name }}</a>
+                {% endfor %}
             </div>
         </div>
     </nav>
@@ -196,6 +257,10 @@
             <p class="text-blue-100/70 text-sm">Created for the love of open water swimming.</p>
         </div>
     </footer>
+
+    <a href="#page-top" class="scroll-to-top" aria-label="Scroll to top" title="Scroll to top">
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    </a>
 
     <script>
         const prefetchedPages = new Set();
